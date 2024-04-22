@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="https://cdn.plot.ly/plotly-2.31.1.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" integrity="sha512-dfX5uYVXzyU8+KHqj8bjo7UkOdg18PaOtpa48djpNbZHwExddghZ+ZmzWT06R5v6NSk3ZUfsH6FNEDepLx9hPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript" src="https://uoa-eresearch.github.io/praat/praat.js"></script>
+    <title>MPAi.js</title>
+  </head>
+  <body>
+    <div id="plot"></div>
+    <script type='module'>
+      function hzToBark(freqHz) {
+        var bark = 26.81/(1 + (1960/freqHz)) - 0.53 //#((26.81 * freqHz)/(1960 + freqHz)) - 0.53 #using Traunmüller1990
+        return bark
+      }
+
+      Papa.parse("kaumatua_monoVowel_formantData.csv", {
+        header: true,
+        download: true,
+        dynamicTyping: true,
+        skipEmptyLines: true,
+        complete: function (results) {
+          results = results.data.filter(r => r.length == "long" && r.speaker == "female")
+          console.log(results)
+          var data = [{
+            x: results.map(r => hzToBark(r["F2_mean"])),
+            y: results.map(r => hzToBark(r["F1_mean"])),
+            autocolorscale: true,
+            text: results.map(r => r.vowel),
+            //textposition: 'top',
+            textfont: {
+              size: 20
+            },
+            hoverinfo: "none",
+            mode: 'text',
+            type: 'scatter'
+          }];
+          var layout = {
+            xaxis: {
+              autorange: 'reversed',
+              visible: false
+            },
+            yaxis: {
+              autorange: 'reversed',
+              visible: false
+            },
+            showlegend: false
+          }
+          Plotly.newPlot('plot', data, layout, {staticPlot: true});
+        }
+      });
+
+      praat({arguments: ["--version"]}).then(function(Module) {
+        praat({noInitialRun: true}).then(async function(Module) {
+          window.Module = Module
+          var response = await fetch("process.praat")
+          var content = await response.text()
+          Module.FS.writeFile("process.praat", content)
+          var response = await fetch("samples/oldmale-word-hee-K004M.wav")
+          var content = await response.arrayBuffer()
+          content = new Uint8Array(content)
+          Module.FS.writeFile("1.wav", content)
+          Module.callMain(["--run", "process.praat", "1.wav", "results.csv"])
+          var results = Module.FS.readFile("results.csv", {encoding: "utf8"})
+          results = await Papa.parse(results, {
+            header: true,
+            dynamicTyping: true
+          }).data
+          console.log(results)
+          var data = [{
+            x: results.map(r => hzToBark(r["F2(Hz)"])),
+            y: results.map(r => hzToBark(r["F1(Hz)"])),
+            mode: 'markers',
+            type: 'scatter'
+          }];
+          Plotly.addTraces('plot', data);
+        })
+      })
+    </script>
+  </body>
+</html>
