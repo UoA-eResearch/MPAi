@@ -152,7 +152,6 @@ function doneEncoding(blob) {
 
     //var audioUrl = URL.createObjectURL(blob);
     //audioRecorder.setupDownload( blob, "myRecording" + ((recIndex<10)?"0":"") + recIndex + ".wav" );
-    console.log("recorded")
     console.log(blob)
     praat({ noInitialRun: true }).then(async function (Module) {
         window.Module = Module
