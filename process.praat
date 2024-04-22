@@ -12,7 +12,8 @@ Read from file: soundname$
 soundname$ = selected$ ("Sound")
 
 select Sound 'soundname$'
-formant = To Formant (burg): 0, 2, 5500, 0.025, 50
+# https://www.fon.hum.uva.nl/praat/manual/Sound__To_Formant__burg____.html
+formant = To Formant (burg): 0, 2, 5000, 0.049, 50
 formantStep = Get time step
 
 
