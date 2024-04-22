@@ -10,7 +10,7 @@
 
 .form-select {
 	display: inline-block;
-	max-width: 200px;
+	max-width: 100px;
 }
 
 canvas {
@@ -36,5 +36,5 @@ canvas {
 	text-align: center;
 	margin: auto;
 	margin-top: 10px;
-	max-width: 200px;
+	max-width: 100px;
 }

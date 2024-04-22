@@ -65,6 +65,12 @@ function initPlot() {
                     range: [3, 8],
                     title: "F1 (Bark)"
                 },
+                margin: {
+                    l: 0,
+                    r: 0,
+                    b: 0,
+                    t: 0,
+                },
                 showlegend: false
             }
             Plotly.newPlot('plot', data, layout, {staticPlot: true});
