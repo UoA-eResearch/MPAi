@@ -27,6 +27,7 @@ var rafID = null;
 var analyserContext = null;
 var canvasWidth, canvasHeight;
 var recIndex = 0;
+var speaker = "Female";
 
 function initPlot() {
     Papa.parse("kaumatua_monoVowel_formantData.csv", {
@@ -35,7 +36,7 @@ function initPlot() {
         dynamicTyping: true,
         skipEmptyLines: true,
         complete: function (results) {
-            results = results.data.filter(r => r.length == "long" && r.speaker == "female")
+            results = results.data.filter(r => r.length == "long" && r.speaker == speaker.toLowerCase())
             console.log(results)
             var data = [{
                 x: results.map(r => hzToBark(r["F2_mean"])),
@@ -52,7 +53,7 @@ function initPlot() {
             var layout = {
                 xaxis: {
                     autorange: 'reversed',
-                    //visible: false
+                    visible: false,
                     // female: xmax = 16.5, xmin = 6.5, ymax = 8, ymin = 3
                     // male: xmax = 15.5    xmin = 5.5    ymax = 7.5    ymin = 2.5
                     range: [6.5, 16.5],
@@ -60,17 +61,47 @@ function initPlot() {
                 },
                 yaxis: {
                     autorange: 'reversed',
-                    //visible: false
+                    visible: false,
                     range: [3, 8],
                     title: "F1 (Bark)"
                 },
                 showlegend: false
             }
-            Plotly.newPlot('plot', data, layout)//, {staticPlot: true});
+            Plotly.newPlot('plot', data, layout, {staticPlot: true});
         }
     });
 }
 initPlot()
+
+$("#speaker").change(function () {
+    speaker = this.value;
+    initPlot()
+})
+
+var sample_lookup = {
+    "Female|a": "oldfemale-word-taa-R001M.wav",
+    "Female|e": "oldfemale-word-hee-R001M.wav",
+    "Female|i": "oldfemale-word-hii-R001M.wav",
+    "Female|o": "oldfemale-word-poo-R001M.wav",
+    "Female|u": "oldfemale-word-tuu-R001M.wav",
+    "Male|a": "oldmale-word-taa-K004M.wav",
+    "Male|e": "oldmale-word-hee-K004M.wav",
+    "Male|i": "oldmale-word-hii-K004M.wav",
+    "Male|o": "oldmale-word-poo-K004M.wav",
+    "Male|u": "oldmale-word-tuu-K004M.wav"
+}
+
+$("#play").click(function () {
+    var vowel = $("#vowel").val()
+    var speaker = $("#speaker").val()
+    var filename = sample_lookup[`${speaker}|${vowel}`]
+    var audio = new Audio(`samples/${filename}`)
+    audio.play()
+})
+
+$("#erase").click(function () {
+    initPlot()
+})
 
 // cache WASM
 praat({ arguments: ["--version"] })
@@ -148,6 +179,10 @@ function doneEncoding(blob) {
         }];
         Plotly.addTraces('plot', data);
     })
+}
+
+if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+    fetch("samples/oldfemale-word-hee-R001M.wav").then(r => r.blob()).then(doneEncoding)
 }
 
 function toggleRecording(e) {
