@@ -13,7 +13,7 @@ soundname$ = selected$ ("Sound")
 
 select Sound 'soundname$'
 # https://www.fon.hum.uva.nl/praat/manual/Sound__To_Formant__burg____.html
-formant = To Formant (burg): 0, 2, 5000, 0.049, 50
+formant = To Formant (burg): 0, 5, 5000, 0.049, 50
 formantStep = Get time step
 
 
