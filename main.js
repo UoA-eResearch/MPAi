@@ -28,6 +28,7 @@ var analyserContext = null;
 var canvasWidth, canvasHeight;
 var recIndex = 0;
 var speaker = "Female";
+var lastRecording;
 
 function initPlot() {
     Papa.parse("kaumatua_monoVowel_formantData.csv", {
@@ -109,6 +110,17 @@ $("#erase").click(function () {
     initPlot()
 })
 
+$("#compare").click(function () {
+    var vowel = $("#vowel").val()
+    var speaker = $("#speaker").val()
+    var filename = sample_lookup[`${speaker}|${vowel}`]
+    var audio = new Audio(`samples/${filename}`)
+    audio.play()
+    audio.addEventListener("ended", function () {
+        new Audio(URL.createObjectURL(lastRecording)).play()
+    });
+});
+
 // cache WASM
 praat({ arguments: ["--version"] })
 
@@ -155,6 +167,8 @@ function hzToBark(freqHz) {
 }
 
 function doneEncoding(blob) {
+    $("#compare").prop('disabled', false);
+    lastRecording = blob;
 
     //var audioUrl = URL.createObjectURL(blob);
     //audioRecorder.setupDownload( blob, "myRecording" + ((recIndex<10)?"0":"") + recIndex + ".wav" );
