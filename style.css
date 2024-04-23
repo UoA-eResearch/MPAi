@@ -38,3 +38,12 @@ canvas {
 	margin-top: 10px;
 	max-width: 100px;
 }
+
+#plot {
+	max-width: 500px;
+	text-align: center;
+	margin: auto;
+	margin-top: 10px;
+	border: 1px solid black;
+	overflow: hidden;
+}
