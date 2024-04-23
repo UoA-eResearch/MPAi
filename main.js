@@ -177,6 +177,10 @@ function doneEncoding(blob) {
         window.Module = Module
         var response = await fetch("process.praat")
         var content = await response.text()
+        if (speaker == "Female") {
+            // Adjust Formant ceiling (Hz)
+            content = content.replace("5000", "5500")
+        }
         Module.FS.writeFile("process.praat", content)
         var content = await blob.arrayBuffer()
         content = new Uint8Array(content)
