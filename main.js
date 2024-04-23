@@ -329,6 +329,11 @@ function gotStream(stream) {
     updateAnalysers();
 }
 
+function onError(e) {
+    alert('Error getting audio');
+    console.log(e);
+}
+
 function initAudio() {
     // One-liner to resume playback when user interacted with the page.
     window.addEventListener('click', function () {
@@ -339,29 +344,12 @@ function initAudio() {
             });
     });
 
-    if (!navigator.getUserMedia)
-        navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.mediaDevices.getUserMedia;
     if (!navigator.cancelAnimationFrame)
         navigator.cancelAnimationFrame = navigator.webkitCancelAnimationFrame || navigator.mozCancelAnimationFrame;
     if (!navigator.requestAnimationFrame)
         navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
 
-
-    navigator.getUserMedia(
-        {
-            "audio": {
-                "mandatory": {
-                    "googEchoCancellation": "false",
-                    "googAutoGainControl": "false",
-                    "googNoiseSuppression": "false",
-                    "googHighpassFilter": "false"
-                },
-                "optional": []
-            },
-        }, gotStream, function (e) {
-            alert('Error getting audio');
-            console.log(e);
-        });
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(gotStream, onError);
 }
 
 window.addEventListener('load', initAudio);
