@@ -121,9 +121,6 @@ $("#compare").click(function () {
     });
 });
 
-// cache WASM
-praat({ arguments: ["--version"] })
-
 function saveAudio() {
     //audioRecorder.exportWAV( doneEncoding );
     // could get mono instead by saying
@@ -166,42 +163,60 @@ function hzToBark(freqHz) {
     return bark
 }
 
-function doneEncoding(blob) {
+function parse_FMS(fms) {
+    var lines = fms.split("\n")
+    var results = [];
+    for (var line of lines) {
+        if (!line) continue;
+        var bits = line.split("\t")
+        var result = {}
+        result["time"] = parseFloat(bits[0].trim())
+        var formants = bits[1].split(" ")
+        for (var i = 0; i < formants.length; i++) {
+            result[`F${i + 1}(Hz)`] = parseInt(formants[i])
+        }
+        var bandwidths = bits[2].split(" ")
+        for (var i = 0; i < bandwidths.length; i++) {
+            result[`B${i + 1}(Hz)`] = parseInt(bandwidths[i])
+        }
+        results.push(result)
+    }
+    return results
+}
+
+async function doneEncoding(blob) {
     $("#compare").prop('disabled', false);
     lastRecording = blob;
 
     //var audioUrl = URL.createObjectURL(blob);
     //audioRecorder.setupDownload( blob, "myRecording" + ((recIndex<10)?"0":"") + recIndex + ".wav" );
     console.log(blob)
-    praat({ noInitialRun: true }).then(async function (Module) {
-        window.Module = Module
-        var response = await fetch("process.praat")
-        var content = await response.text()
-        if (speaker == "Female") {
-            // Adjust Formant ceiling (Hz)
-            content = content.replace("5000", "5500")
-        }
-        Module.FS.writeFile("process.praat", content)
-        var content = await blob.arrayBuffer()
-        content = new Uint8Array(content)
-        Module.FS.writeFile("1.wav", content)
-        Module.callMain(["--run", "process.praat", "1.wav", "results.csv"])
-        var results = Module.FS.readFile("results.csv", { encoding: "utf8" })
-        results = await Papa.parse(results, {
-            header: true,
-            dynamicTyping: true
-        }).data
-        console.log(results)
-        results = results.filter(r => r.Pitch > 50 && r["F1(Hz)"] > 0 && r["F2(Hz)"] > 0)
-        console.log(results)
-        var data = [{
-            x: results.map(r => hzToBark(r["F2(Hz)"])),
-            y: results.map(r => hzToBark(r["F1(Hz)"])),
-            mode: 'markers',
-            type: 'scatter'
-        }];
-        Plotly.addTraces('plot', data);
-    })
+    var content = await blob.arrayBuffer()
+    content = new Uint8Array(content)
+    FS.writeFile("1.wav", content)
+    var args = [
+        "1.wav", // input file
+        "-oA", // output in plain ASCII format
+        //"-L=49", // set effective length of analysis window to <dur> ms (default: 20.0)
+        //"-n=2", // set number of output formants to <num> (default: 4;  maximum: 8 or half the LP order)
+        //"-p=-0.95", // set pre-emphasis factor to <val> (-1 <= val <= 0) (default: dependent on sample rate and nominal F1)
+        //"-s=10", // set analysis window shift to <dur> ms (default: 5.0)
+        "-t=50" //  set silence threshold (no analysis) to <num> dB (default: 0.0 dB)
+    ]
+    if (speaker == "Female") {
+        args.push("-f")
+    }
+    callMain(args)
+    var results = parse_FMS(FS.readFile("1.fms", {encoding: "utf8"}))
+    results = results.filter(r => r["F1(Hz)"] > 0 && r["F2(Hz)"] > 0)
+    console.log(results)
+    var data = [{
+        x: results.map(r => hzToBark(r["F2(Hz)"])),
+        y: results.map(r => hzToBark(r["F1(Hz)"])),
+        mode: 'markers',
+        type: 'scatter'
+    }];
+    Plotly.addTraces('plot', data);
 }
 
 if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
