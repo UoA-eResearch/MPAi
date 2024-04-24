@@ -214,6 +214,25 @@ async function doneEncoding(blob) {
             type: 'scatter'
         }];
         Plotly.addTraces('plot', data);
+
+        var keys = Object.keys(results[0]).filter(k => k.startsWith("F"))
+        data = []
+        for (var k of keys) {
+            data.push({
+                x: results.map(r => r.time),
+                y: results.map(r => r[k]),
+                name: k
+            })
+        }
+        var layout = {
+            xaxis: {
+                title: "Time (s)"
+            },
+            yaxis: {
+                title: "Hz"
+            },
+        }
+        Plotly.newPlot('debug_plot', data, layout)//, {staticPlot: true});
     })
 }
 
