@@ -177,7 +177,22 @@ function parse_FMS(fms) {
     return results
 }
 
+function parse_F0(xassp) {
+    var lines = xassp.split("\n")
+    var results = [];
+    for (var i = 1; i < lines.length; i++) {
+        if (!lines[i]) continue;
+        var bits = lines[i].split("\t")
+        var result = {}
+        result["time"] = parseFloat(bits[0].trim())
+        result["F0(Hz)"] = parseFloat(bits[1])
+        results.push(result)
+    }
+    return results;
+}
+
 // Cache WASM
+ksvF0({arguments:["-X"]})
 forest({arguments:["-X"]})
 
 async function doneEncoding(blob) {
@@ -187,52 +202,72 @@ async function doneEncoding(blob) {
     //var audioUrl = URL.createObjectURL(blob);
     //audioRecorder.setupDownload( blob, "myRecording" + ((recIndex<10)?"0":"") + recIndex + ".wav" );
     console.log(blob)
-    forest({noInitialRun: true}).then(async function(Module) {
-        var content = await blob.arrayBuffer()
-        content = new Uint8Array(content)
+    var content = await blob.arrayBuffer()
+    content = new Uint8Array(content)
+
+    ksvF0({noInitialRun: true}).then(async function(Module) {
         Module.FS.writeFile("1.wav", content)
         var args = [
             "1.wav", // input file
-            "-oA", // output in plain ASCII format
-            //"-L=49", // set effective length of analysis window to <dur> ms (default: 20.0)
-            //"-n=2", // set number of output formants to <num> (default: 4;  maximum: 8 or half the LP order)
-            //"-p=-0.95", // set pre-emphasis factor to <val> (-1 <= val <= 0) (default: dependent on sample rate and nominal F1)
-            //"-s=10", // set analysis window shift to <dur> ms (default: 5.0)
-            "-t=50" //  set silence threshold (no analysis) to <num> dB (default: 0.0 dB)
+            "-oA", // output in XASSP ASCII format
         ]
         if (speaker == "Female") {
-            args.push("-f")
+            args.push("-g=f")
+        } else {
+            args.push("-g=m")
         }
         Module.callMain(args)
-        var results = parse_FMS(Module.FS.readFile("1.fms", {encoding: "utf8"}))
-        results = results.filter(r => r["F1(Hz)"] > 0 && r["F2(Hz)"] > 0)
-        console.log(results)
-        var data = [{
-            x: results.map(r => hzToBark(r["F2(Hz)"])),
-            y: results.map(r => hzToBark(r["F1(Hz)"])),
-            mode: 'markers',
-            type: 'scatter'
-        }];
-        Plotly.addTraces('plot', data);
+        var pitch_results = parse_F0(Module.FS.readFile("1.f0", {encoding: "utf8"}))
+        console.log(pitch_results)
+        forest({noInitialRun: true}).then(async function(Module) {
+            Module.FS.writeFile("1.wav", content)
+            var args = [
+                "1.wav", // input file
+                "-oA", // output in plain ASCII format
+                //"-L=49", // set effective length of analysis window to <dur> ms (default: 20.0)
+                "-n=2", // set number of output formants to <num> (default: 4;  maximum: 8 or half the LP order)
+                //"-p=-0.95", // set pre-emphasis factor to <val> (-1 <= val <= 0) (default: dependent on sample rate and nominal F1)
+                //"-s=10", // set analysis window shift to <dur> ms (default: 5.0)
+                //"-t=70" //  set silence threshold (no analysis) to <num> dB (default: 0.0 dB)
+            ]
+            if (speaker == "Female") {
+                args.push("-f")
+            }
+            Module.callMain(args)
+            var results = parse_FMS(Module.FS.readFile("1.fms", {encoding: "utf8"}))
+            console.log(results)
+            for (var i = 0; i < results.length; i++) {
+                results[i]["F0(Hz)"] = pitch_results[i]["F0(Hz)"]
+            }
+            results = results.filter(r => r["F0(Hz)"] > 0 && r["F1(Hz)"] > 0 && r["F2(Hz)"] > 0)
+            console.log(results)
+            var data = [{
+                x: results.map(r => hzToBark(r["F2(Hz)"])),
+                y: results.map(r => hzToBark(r["F1(Hz)"])),
+                mode: 'markers',
+                type: 'scatter'
+            }];
+            Plotly.addTraces('plot', data);
 
-        var keys = Object.keys(results[0]).filter(k => k.startsWith("F"))
-        data = []
-        for (var k of keys) {
-            data.push({
-                x: results.map(r => r.time),
-                y: results.map(r => r[k]),
-                name: k
-            })
-        }
-        var layout = {
-            xaxis: {
-                title: "Time (s)"
-            },
-            yaxis: {
-                title: "Hz"
-            },
-        }
-        Plotly.newPlot('debug_plot', data, layout)//, {staticPlot: true});
+            var keys = Object.keys(results[0]).filter(k => k.startsWith("F"))
+            data = []
+            for (var k of keys) {
+                data.push({
+                    x: results.map(r => r.time),
+                    y: results.map(r => r[k]),
+                    name: k
+                })
+            }
+            var layout = {
+                xaxis: {
+                    title: "Time (s)"
+                },
+                yaxis: {
+                    title: "Hz"
+                },
+            }
+            Plotly.newPlot('debug_plot', data, layout)//, {staticPlot: true});
+        })
     })
 }
 
