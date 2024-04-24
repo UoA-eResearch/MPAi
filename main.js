@@ -121,13 +121,6 @@ $("#compare").click(function () {
     });
 });
 
-function saveAudio() {
-    //audioRecorder.exportWAV( doneEncoding );
-    // could get mono instead by saying
-    audioRecorder.exportMonoWAV(doneEncoding);
-
-}
-
 function drawBuffer(width, height, context, data) {
     var step = Math.ceil(data.length / width);
     var amp = height / 2;
@@ -155,7 +148,7 @@ function gotBuffers(buffers) {
 
     // the ONLY time gotBuffers is called is right after a new recording is completed -
     // so here's where we should set up the download.
-    audioRecorder.exportWAV(doneEncoding);
+    audioRecorder.exportMonoWAV(doneEncoding);
 }
 
 function hzToBark(freqHz) {
