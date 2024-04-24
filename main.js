@@ -184,6 +184,9 @@ function parse_FMS(fms) {
     return results
 }
 
+// Cache WASM
+forest({arguments:["-X"]})
+
 async function doneEncoding(blob) {
     $("#compare").prop('disabled', false);
     lastRecording = blob;
@@ -191,32 +194,34 @@ async function doneEncoding(blob) {
     //var audioUrl = URL.createObjectURL(blob);
     //audioRecorder.setupDownload( blob, "myRecording" + ((recIndex<10)?"0":"") + recIndex + ".wav" );
     console.log(blob)
-    var content = await blob.arrayBuffer()
-    content = new Uint8Array(content)
-    FS.writeFile("1.wav", content)
-    var args = [
-        "1.wav", // input file
-        "-oA", // output in plain ASCII format
-        //"-L=49", // set effective length of analysis window to <dur> ms (default: 20.0)
-        //"-n=2", // set number of output formants to <num> (default: 4;  maximum: 8 or half the LP order)
-        //"-p=-0.95", // set pre-emphasis factor to <val> (-1 <= val <= 0) (default: dependent on sample rate and nominal F1)
-        //"-s=10", // set analysis window shift to <dur> ms (default: 5.0)
-        "-t=50" //  set silence threshold (no analysis) to <num> dB (default: 0.0 dB)
-    ]
-    if (speaker == "Female") {
-        args.push("-f")
-    }
-    callMain(args)
-    var results = parse_FMS(FS.readFile("1.fms", {encoding: "utf8"}))
-    results = results.filter(r => r["F1(Hz)"] > 0 && r["F2(Hz)"] > 0)
-    console.log(results)
-    var data = [{
-        x: results.map(r => hzToBark(r["F2(Hz)"])),
-        y: results.map(r => hzToBark(r["F1(Hz)"])),
-        mode: 'markers',
-        type: 'scatter'
-    }];
-    Plotly.addTraces('plot', data);
+    forest({noInitialRun: true}).then(async function(Module) {
+        var content = await blob.arrayBuffer()
+        content = new Uint8Array(content)
+        Module.FS.writeFile("1.wav", content)
+        var args = [
+            "1.wav", // input file
+            "-oA", // output in plain ASCII format
+            //"-L=49", // set effective length of analysis window to <dur> ms (default: 20.0)
+            //"-n=2", // set number of output formants to <num> (default: 4;  maximum: 8 or half the LP order)
+            //"-p=-0.95", // set pre-emphasis factor to <val> (-1 <= val <= 0) (default: dependent on sample rate and nominal F1)
+            //"-s=10", // set analysis window shift to <dur> ms (default: 5.0)
+            "-t=50" //  set silence threshold (no analysis) to <num> dB (default: 0.0 dB)
+        ]
+        if (speaker == "Female") {
+            args.push("-f")
+        }
+        Module.callMain(args)
+        var results = parse_FMS(Module.FS.readFile("1.fms", {encoding: "utf8"}))
+        results = results.filter(r => r["F1(Hz)"] > 0 && r["F2(Hz)"] > 0)
+        console.log(results)
+        var data = [{
+            x: results.map(r => hzToBark(r["F2(Hz)"])),
+            y: results.map(r => hzToBark(r["F1(Hz)"])),
+            mode: 'markers',
+            type: 'scatter'
+        }];
+        Plotly.addTraces('plot', data);
+    })
 }
 
 if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
