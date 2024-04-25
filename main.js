@@ -148,6 +148,7 @@ function gotBuffers(buffers) {
 
     // the ONLY time gotBuffers is called is right after a new recording is completed -
     // so here's where we should set up the download.
+    //audioRecorder.exportWAV(doneEncoding);
     audioRecorder.exportMonoWAV(doneEncoding);
 }
 
@@ -204,6 +205,7 @@ async function doneEncoding(blob) {
     console.log(blob)
     var content = await blob.arrayBuffer()
     content = new Uint8Array(content)
+    console.log(content)
 
     ksvF0({noInitialRun: true}).then(async function(Module) {
         Module.FS.writeFile("1.wav", content)
@@ -239,7 +241,7 @@ async function doneEncoding(blob) {
             for (var i = 0; i < results.length; i++) {
                 results[i]["F0(Hz)"] = pitch_results[i]["F0(Hz)"]
             }
-            results = results.filter(r => r["F0(Hz)"] > 0 && r["F1(Hz)"] > 0 && r["F2(Hz)"] > 0)
+            results = results.filter(r => r["F0(Hz)"] > 50 && r["F1(Hz)"] > 0 && r["F2(Hz)"] > 0)
             console.log(results)
             var data = [{
                 x: results.map(r => hzToBark(r["F2(Hz)"])),
@@ -374,25 +376,11 @@ function updateAnalysers(time) {
 
 
 function gotStream(stream) {
-    inputPoint = audioContext.createGain();
-
-    // Create an AudioNode from the stream.
-    realAudioInput = audioContext.createMediaStreamSource(stream);
-    audioInput = realAudioInput;
-    audioInput.connect(inputPoint);
-
-    //audioInput = convertToMono(audioInput);
-
+    audioInput = audioContext.createMediaStreamSource(stream);
     analyserNode = audioContext.createAnalyser();
     analyserNode.fftSize = 2048;
-    inputPoint.connect(analyserNode);
-
-    audioRecorder = new Recorder(inputPoint, { numChannels: 1 });
-
-    zeroGain = audioContext.createGain();
-    zeroGain.gain.value = 0.0;
-    inputPoint.connect(zeroGain);
-    zeroGain.connect(audioContext.destination);
+    audioInput.connect(analyserNode);
+    audioRecorder = new Recorder(audioInput, { numChannels: 1 });
     updateAnalysers();
 }
 
@@ -416,7 +404,12 @@ function initAudio() {
     if (!navigator.requestAnimationFrame)
         navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
 
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(gotStream, onError);
+    navigator.mediaDevices.getUserMedia({ audio: {
+        numChannels: 1,
+        autoGainControl: true,
+        echoCancellation: true,
+        noiseSuppression: true
+    } }).then(gotStream, onError);
 }
 
 window.addEventListener('load', initAudio);
