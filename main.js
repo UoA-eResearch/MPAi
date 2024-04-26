@@ -53,17 +53,17 @@ function initPlot() {
             }];
             shapes = []
             for (var r of results) {
-                var segments = 5;
-                for (i = 1; i <= segments; i++) {
+                var step = .05;
+                for (i = 0; i <= 1; i += step) {
                     shapes.push({
                         type: "circle",
                         xref: "x",
                         yref: "y",
-                        x0: hzToBark(r["F2_mean"] - r["F2_sd"] / i),
-                        y0: hzToBark(r["F1_mean"] - r["F1_sd"] / i),
-                        x1: hzToBark(r["F2_mean"] + r["F2_sd"] / i),
-                        y1: hzToBark(r["F1_mean"] + r["F1_sd"] / i),
-                        opacity: 0.1,
+                        x0: hzToBark(r["F2_mean"] - r["F2_sd"] * i),
+                        y0: hzToBark(r["F1_mean"] - r["F1_sd"] * i),
+                        x1: hzToBark(r["F2_mean"] + r["F2_sd"] * i),
+                        y1: hzToBark(r["F1_mean"] + r["F1_sd"] * i),
+                        opacity: step / 2,
                         fillcolor: 'red',
                         line: {
                             width: 0
