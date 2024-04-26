@@ -53,20 +53,23 @@ function initPlot() {
             }];
             shapes = []
             for (var r of results) {
-                shapes.push({
-                    type: "circle",
-                    xref: "x",
-                    yref: "y",
-                    x0: hzToBark(r["F2_mean"] - r["F2_sd"]),
-                    y0: hzToBark(r["F1_mean"] - r["F1_sd"]),
-                    x1: hzToBark(r["F2_mean"] + r["F2_sd"]),
-                    y1: hzToBark(r["F1_mean"] + r["F1_sd"]),
-                    opacity: 0.1,
-                    fillcolor: 'red',
-                    line: {
-                        color: 'red'
-                    }
-                })
+                var segments = 5;
+                for (i = 1; i <= segments; i++) {
+                    shapes.push({
+                        type: "circle",
+                        xref: "x",
+                        yref: "y",
+                        x0: hzToBark(r["F2_mean"] - r["F2_sd"] / i),
+                        y0: hzToBark(r["F1_mean"] - r["F1_sd"] / i),
+                        x1: hzToBark(r["F2_mean"] + r["F2_sd"] / i),
+                        y1: hzToBark(r["F1_mean"] + r["F1_sd"] / i),
+                        opacity: 0.1,
+                        fillcolor: 'red',
+                        line: {
+                            width: 0
+                        }
+                    })
+                }
             }
             var layout = {
                 shapes: shapes,
