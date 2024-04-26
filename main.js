@@ -235,6 +235,7 @@ async function doneEncoding(blob) {
     console.log(blob)
     var content = await blob.arrayBuffer()
     content = new Uint8Array(content)
+    var start = performance.now()
 
     ksvF0({noInitialRun: true}).then(async function(Module) {
         Module.FS.writeFile("1.wav", content)
@@ -249,7 +250,6 @@ async function doneEncoding(blob) {
         }
         Module.callMain(args)
         var pitch_results = parse_F0(Module.FS.readFile("1.f0", {encoding: "utf8"}))
-        console.log(pitch_results)
         forest({noInitialRun: true}).then(async function(Module) {
             Module.FS.writeFile("1.wav", content)
             var args = [
@@ -270,7 +270,8 @@ async function doneEncoding(blob) {
             for (var i = 0; i < results.length; i++) {
                 results[i]["F0(Hz)"] = pitch_results[i]["F0(Hz)"]
             }
-            results = results.filter(r => r["F0(Hz)"] > 50 && r["F1(Hz)"] > 0 && r["F2(Hz)"] > 0)
+            results = results.filter(r => r["F0(Hz)"] > 0 && r["F1(Hz)"] > 0 && r["F2(Hz)"] > 0)
+            console.log(`Time taken: ${performance.now() - start}ms`)
             console.log(results)
             var data = [{
                 x: results.map(r => hzToBark(r["F2(Hz)"])),
