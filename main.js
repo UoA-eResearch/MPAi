@@ -421,7 +421,7 @@ function onError(e) {
 
 function initAudio() {
     // One-liner to resume playback when user interacted with the page.
-    window.addEventListener('click', function () {
+    window.addEventListener('mousedown keydown touchstart', function () {
         if (audioContext.state == 'suspended')
             audioContext.resume().then(() => {
                 console.log('Playback resumed successfully');
