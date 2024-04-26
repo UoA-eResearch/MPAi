@@ -51,7 +51,25 @@ function initPlot() {
                 mode: 'text',
                 type: 'scatter'
             }];
+            shapes = []
+            for (var r of results) {
+                shapes.push({
+                    type: "circle",
+                    xref: "x",
+                    yref: "y",
+                    x0: hzToBark(r["F2_mean"] - r["F2_sd"]),
+                    y0: hzToBark(r["F1_mean"] - r["F1_sd"]),
+                    x1: hzToBark(r["F2_mean"] + r["F2_sd"]),
+                    y1: hzToBark(r["F1_mean"] + r["F1_sd"]),
+                    opacity: 0.1,
+                    fillcolor: 'red',
+                    line: {
+                        color: 'red'
+                    }
+                })
+            }
             var layout = {
+                shapes: shapes,
                 xaxis: {
                     autorange: 'reversed',
                     showticklabels: false,
