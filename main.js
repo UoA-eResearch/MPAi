@@ -54,24 +54,32 @@ function initPlot() {
             var layout = {
                 xaxis: {
                     autorange: 'reversed',
-                    visible: false,
+                    showticklabels: false,
+                    showgrid: false,
+                    //visible: false,
                     // female: xmax = 16.5, xmin = 6.5, ymax = 8, ymin = 3
                     // male: xmax = 15.5    xmin = 5.5    ymax = 7.5    ymin = 2.5
                     range: [6.5, 16.5],
-                    title: "F2 (Bark)"
+                    //title: "F2 (Bark)"
+                    title: "Tongue Position"
                 },
                 yaxis: {
                     autorange: 'reversed',
-                    visible: false,
+                    showticklabels: false,
+                    showgrid: false,
+                    //visible: false,
                     range: [3, 8],
-                    title: "F1 (Bark)"
+                    //title: "F1 (Bark)",
+                    title: "Mouth Openness"
                 },
+                /*
                 margin: {
                     l: 0,
                     r: 0,
                     b: 0,
                     t: 0,
                 },
+                */
                 showlegend: false
             }
             Plotly.newPlot('plot', data, layout, {staticPlot: true});
@@ -141,6 +149,7 @@ function drawBuffer(width, height, context, data) {
 }
 
 function gotBuffers(buffers) {
+    console.log(buffers)
     var canvas = document.getElementById("wavedisplay");
     var sampleRate = audioContext.sampleRate
 
@@ -205,7 +214,6 @@ async function doneEncoding(blob) {
     console.log(blob)
     var content = await blob.arrayBuffer()
     content = new Uint8Array(content)
-    console.log(content)
 
     ksvF0({noInitialRun: true}).then(async function(Module) {
         Module.FS.writeFile("1.wav", content)
@@ -380,7 +388,7 @@ function gotStream(stream) {
     analyserNode = audioContext.createAnalyser();
     analyserNode.fftSize = 2048;
     audioInput.connect(analyserNode);
-    audioRecorder = new Recorder(audioInput, { numChannels: 1 });
+    audioRecorder = new Recorder(audioInput);
     updateAnalysers();
 }
 
@@ -405,7 +413,7 @@ function initAudio() {
         navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
 
     navigator.mediaDevices.getUserMedia({ audio: {
-        numChannels: 1,
+        //numChannels: 1,
         autoGainControl: true,
         echoCancellation: true,
         noiseSuppression: true
