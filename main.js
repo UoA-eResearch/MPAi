@@ -406,6 +406,7 @@ function updateAnalysers(time) {
 
 
 function gotStream(stream) {
+    audioContext = new AudioContext();
     audioInput = audioContext.createMediaStreamSource(stream);
     analyserNode = audioContext.createAnalyser();
     analyserNode.fftSize = 2048;
