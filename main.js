@@ -74,24 +74,24 @@ function initPlot() {
             var layout = {
                 shapes: shapes,
                 xaxis: {
-                    autorange: 'reversed',
                     showticklabels: false,
                     showgrid: false,
+                    zeroline: false,
                     //visible: false,
                     // female: xmax = 16.5, xmin = 6.5, ymax = 8, ymin = 3
                     // male: xmax = 15.5    xmin = 5.5    ymax = 7.5    ymin = 2.5
-                    range: [6.5, 16.5],
+                    range: [16.5, 5.5],
                     //title: "F2 (Bark)"
-                    title: "Tongue Position"
+                    title: "Tongue Position (F2)"
                 },
                 yaxis: {
-                    autorange: 'reversed',
                     showticklabels: false,
                     showgrid: false,
+                    zeroline: false,
                     //visible: false,
-                    range: [3, 8],
+                    range: [8, 2],
                     //title: "F1 (Bark)",
-                    title: "Mouth Openness"
+                    title: "Mouth Openness (F1)"
                 },
                 /*
                 margin: {
@@ -304,7 +304,9 @@ async function doneEncoding(blob) {
 }
 
 if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-    fetch("samples/oldfemale-word-hee-R001M.wav").then(r => r.blob()).then(doneEncoding)
+    setTimeout(() => {
+        fetch("samples/oldmale-word-hee-K004M.wav").then(r => r.blob()).then(doneEncoding)
+    }, 100)
 }
 
 function toggleRecording(e) {
