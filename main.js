@@ -340,6 +340,7 @@ window.addEventListener('keydown', event => {
 
             //recording = 1;
         }
+        event.preventDefault()
     }
 })
 window.addEventListener('keyup', event => {
