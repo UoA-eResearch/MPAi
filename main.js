@@ -375,39 +375,54 @@ function updateAnalysers(time) {
         analyserContext = canvas.getContext('2d');
     }
 
-    // analyzer draw code here
-    {
-        var SPACING = 3;
-        var BAR_WIDTH = 1;
-        var numBars = Math.round(canvasWidth / SPACING);
-        var freqByteData = new Uint8Array(analyserNode.frequencyBinCount);
+    // Initialise an array to recieve the frequency data
+    var data = new Uint8Array(analyserNode.frequencyBinCount);
 
-        analyserNode.getByteFrequencyData(freqByteData);
+    // https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getByteFrequencyData
+    // Each item in the array represents the decibel value for a specific frequency. The frequencies are spread linearly from 0 to 1/2 of the sample rate. For example, for 48000 sample rate, the last item of the array will represent the decibel value for 24000 Hz.
+    analyserNode.getByteFrequencyData(data);
 
-        analyserContext.clearRect(0, 0, canvasWidth, canvasHeight);
-        analyserContext.fillStyle = '#F6D565';
-        analyserContext.lineCap = 'round';
-        var multiplier = analyserNode.frequencyBinCount / numBars;
+    analyserContext.clearRect(0, 0, canvasWidth, canvasHeight);
+    analyserContext.fillStyle = '#F6D565';
+    analyserContext.lineCap = 'round';
 
-        // Draw rectangle for each frequency bin.
-        for (var i = 0; i < numBars; ++i) {
-            var magnitude = 0;
-            var offset = Math.floor(i * multiplier);
-            // gotta sum/average the block, or we miss narrow-bandwidth spikes
-            for (var j = 0; j < multiplier; j++)
-                magnitude += freqByteData[offset + j];
-            magnitude = magnitude / multiplier;
-            var magnitude2 = freqByteData[i * multiplier];
-            analyserContext.fillStyle = "hsl( " + Math.round((i * 360) / numBars) + ", 100%, 50%)";
-            analyserContext.fillRect(i * SPACING, canvasHeight, BAR_WIDTH, -magnitude);
-        }
+    // Draw rectangle for each frequency bin.
+    for (var x = 0; x < canvasWidth; x++) {
+        var y = data[x];
+        // In HSL space, 0=red 120=green 240=blue 360=red
+        var hue = x * 360 / canvasWidth
+        analyserContext.fillStyle = `hsl(${hue}, 100%, 50%)`;
+        // x (upper left), y (upper left), width, height
+        analyserContext.fillRect(x, canvasHeight, 1, -y);
     }
+
+    /*
+    analyserNode.getByteTimeDomainData(data);
+    analyserContext.lineWidth = 2;
+    analyserContext.strokeStyle = 'rgb(0, 0, 0)';
+    analyserContext.beginPath();
+    let sliceWidth = canvasWidth / analyserNode.frequencyBinCount;
+    let x = 0;
+
+    for (let i = 0; i < analyserNode.frequencyBinCount; i++) {
+        let v = data[i] / 128.0;
+        let y = v * canvasHeight / 2;
+        if (i === 0) {
+            analyserContext.moveTo(x, y);
+        } else {
+            analyserContext.lineTo(x, y);
+        }
+        x += sliceWidth;
+    }
+
+    analyserContext.lineTo(canvasWidth, canvasHeight / 2);
+    analyserContext.stroke();
+    */
 
     rafID = window.requestAnimationFrame(updateAnalysers);
 }
 
-
-
+// This is called after the user grants microphone permission, and the microphone is ready to use.
 function gotStream(stream) {
     audioContext = new AudioContext();
     audioInput = audioContext.createMediaStreamSource(stream);
