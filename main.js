@@ -29,6 +29,8 @@ var canvasWidth, canvasHeight;
 var recIndex = 0;
 var speaker = "Female";
 var lastRecording;
+var traces = [];
+var layout = {};
 
 function initPlot() {
     Papa.parse("kaumatua_monoVowel_formantData.csv", {
@@ -39,7 +41,7 @@ function initPlot() {
         complete: function (results) {
             results = results.data.filter(r => r.length == "long" && r.speaker == speaker.toLowerCase())
             console.log(results)
-            var data = [{
+            traces = [{
                 x: results.map(r => hzToBark(r["F2_mean"])),
                 y: results.map(r => hzToBark(r["F1_mean"])),
                 autocolorscale: true,
@@ -49,7 +51,8 @@ function initPlot() {
                     size: 20
                 },
                 mode: 'text',
-                type: 'scatter'
+                type: 'scatter',
+                hoverinfo: "none"
             }];
             shapes = []
             for (var r of results) {
@@ -71,8 +74,12 @@ function initPlot() {
                     })
                 }
             }
-            var layout = {
+            layout = {
                 shapes: shapes,
+                dragmode: false,
+                hoverinfo: "none",
+                hovermode: "x",
+                clickmode: "event",
                 xaxis: {
                     showticklabels: false,
                     showgrid: false,
@@ -103,7 +110,18 @@ function initPlot() {
                 */
                 showlegend: false
             }
-            Plotly.newPlot('plot', data, layout, {staticPlot: true});
+            Plotly.newPlot('plot', traces, layout, {
+                displayModeBar: false
+            });
+            plot.on('plotly_click', function(data){
+                for (var trace of data.points) {
+                    var vowel = trace.text;
+                    if (vowel) {
+                        console.log("clicked", vowel);
+                        $("#vowel").val(vowel).change();
+                    }
+                }
+            });
         }
     });
 }
@@ -113,6 +131,16 @@ $("#speaker").change(function () {
     speaker = this.value;
     initPlot()
 })
+
+$("#vowel").change(function () {
+    var vowel =  $("#vowel").val()
+    var speaker = $("#speaker").val()
+    var filename = "samples/" + sample_lookup[`${speaker}|${vowel}`]
+    fetch(filename).then(r => r.blob()).then(async function(r) {
+        new Audio(URL.createObjectURL(r)).play()
+        await doneEncoding(r)
+    })
+});
 
 var sample_lookup = {
     "Female|a": "oldfemale-word-taa-R001M.wav",
@@ -271,26 +299,37 @@ async function doneEncoding(blob) {
                 results[i]["F0(Hz)"] = pitch_results[i]["F0(Hz)"]
             }
             results = results.filter(r => r["F0(Hz)"] > 0 && r["F1(Hz)"] > 0 && r["F2(Hz)"] > 0)
+            if (results.length == 0) {
+                console.warn("No formants detected")
+                return
+            }
             console.log(`Time taken: ${performance.now() - start}ms`)
             console.log(results)
-            var data = [{
+            var new_trace = {
                 x: results.map(r => hzToBark(r["F2(Hz)"])),
                 y: results.map(r => hzToBark(r["F1(Hz)"])),
+                opacity: 1,
                 mode: 'markers',
-                type: 'scatter'
-            }];
-            Plotly.addTraces('plot', data);
+                type: 'scatter',
+                hoverinfo: "none"
+            };
+            for (var i = 0; i < traces.length - 1; i++) {
+                traces[i].opacity = Math.max(0, traces[i].opacity - .3)
+            }
+            traces.splice(traces.length - 1, 0, new_trace);
+            console.log(traces, layout)
+            Plotly.react('plot', traces, layout);
 
             var keys = Object.keys(results[0]).filter(k => k.startsWith("F"))
-            data = []
+            var debug_traces = []
             for (var k of keys) {
-                data.push({
+                debug_traces.push({
                     x: results.map(r => r.time),
                     y: results.map(r => r[k]),
                     name: k
                 })
             }
-            var layout = {
+            var debug_layout = {
                 xaxis: {
                     title: "Time (s)"
                 },
@@ -298,10 +337,11 @@ async function doneEncoding(blob) {
                     title: "Hz"
                 },
             }
-            Plotly.newPlot('debug_plot', data, layout)//, {staticPlot: true});
+            Plotly.newPlot('debug_plot', debug_traces, debug_layout)//, {staticPlot: true});
         })
     })
 }
+
 
 if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
     setTimeout(() => {
