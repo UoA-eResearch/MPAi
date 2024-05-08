@@ -154,7 +154,8 @@ function initPlot() {
             }
             Plotly.newPlot('plot', traces, layout, {
                displayModeBar: false,
-               doubleClick: false
+               doubleClick: false,
+               staticPlot: true
             })
         }
     });
