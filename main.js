@@ -76,6 +76,48 @@ function initPlot() {
             }
             layout = {
                 shapes: shapes,
+                annotations: [
+                    {
+                        xref: 'paper',
+                        yref: 'paper',
+                        x: 0,
+                        xanchor: 'right',
+                        y: 1,
+                        yanchor: 'bottom',
+                        text: 'Closed',
+                        showarrow: false
+                    },
+                    {
+                        xref: 'paper',
+                        yref: 'paper',
+                        x: 0,
+                        xanchor: 'right',
+                        y: 0,
+                        yanchor: 'bottom',
+                        text: 'Open',
+                        showarrow: false
+                    },
+                    {
+                        xref: 'paper',
+                        yref: 'paper',
+                        x: 0,
+                        xanchor: 'left',
+                        y: 0,
+                        yanchor: 'top',
+                        text: 'Front',
+                        showarrow: false
+                    },
+                    {
+                        xref: 'paper',
+                        yref: 'paper',
+                        x: 1,
+                        xanchor: 'left',
+                        y: 0,
+                        yanchor: 'top',
+                        text: 'Back',
+                        showarrow: false
+                    }
+                ],
                 dragmode: false,
                 hoverinfo: "none",
                 hovermode: "x",
