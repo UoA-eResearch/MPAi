@@ -164,8 +164,10 @@ initPlot()
 
 $("#plot").click(function (evt) {
     var bb = evt.target.getBoundingClientRect();
-    var x = this._fullLayout.xaxis.p2d(evt.originalEvent.clientX - bb.left);
-    var y = this._fullLayout.yaxis.p2d(evt.originalEvent.clientY - bb.top);
+    var l = this._fullLayout.margin.l;
+    var t = this._fullLayout.margin.t;
+    var x = this._fullLayout.xaxis.p2d(evt.originalEvent.clientX - bb.left - l);
+    var y = this._fullLayout.yaxis.p2d(evt.originalEvent.clientY - bb.top - t);
     var trace = traces[traces.length - 1];
     var minIdx = 0;
     var minDist = Infinity;
@@ -177,7 +179,7 @@ $("#plot").click(function (evt) {
         }
     }
     var vowel = trace.text[minIdx]
-    console.log("Clicked", vowel)
+    console.log("Clicked", vowel, minDist)
     $("#vowel").val(vowel).change()
 })
 
