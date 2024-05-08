@@ -111,7 +111,8 @@ function initPlot() {
                 showlegend: false
             }
             Plotly.newPlot('plot', traces, layout, {
-                displayModeBar: false
+               displayModeBar: false,
+               doubleClick: false
             });
             plot.on('plotly_click', function(data){
                 for (var trace of data.points) {
