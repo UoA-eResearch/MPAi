@@ -113,33 +113,30 @@ function initPlot() {
             Plotly.newPlot('plot', traces, layout, {
                displayModeBar: false,
                doubleClick: false
-            }).then(attach);
+            })
         }
     });
 }
 initPlot()
 
-function attach() {
-    var gd = document.getElementById('plot');
-    gd.addEventListener('click', function(evt) {
-        var bb = evt.target.getBoundingClientRect();
-        var x = gd._fullLayout.xaxis.p2d(evt.clientX - bb.left);
-        var y = gd._fullLayout.yaxis.p2d(evt.clientY - bb.top);
-        var trace = traces[traces.length - 1];
-        var minIdx = 0;
-        var minDist = Infinity;
-        for (var i = 0; i < trace.x.length; i++) {
-            var dist = Math.sqrt((trace.x[i] - x) ** 2 + (trace.y[i] - y) ** 2)
-            if (dist < minDist) {
-                minDist = dist;
-                minIdx = i;
-            }
+$("#plot").click(function (evt) {
+    var bb = evt.target.getBoundingClientRect();
+    var x = this._fullLayout.xaxis.p2d(evt.originalEvent.clientX - bb.left);
+    var y = this._fullLayout.yaxis.p2d(evt.originalEvent.clientY - bb.top);
+    var trace = traces[traces.length - 1];
+    var minIdx = 0;
+    var minDist = Infinity;
+    for (var i = 0; i < trace.x.length; i++) {
+        var dist = Math.sqrt((trace.x[i] - x) ** 2 + (trace.y[i] - y) ** 2)
+        if (dist < minDist) {
+            minDist = dist;
+            minIdx = i;
         }
-        var vowel = trace.text[minIdx]
-        console.log("Clicked", vowel)
-        $("#vowel").val(vowel).change()
-    });
-}
+    }
+    var vowel = trace.text[minIdx]
+    console.log("Clicked", vowel)
+    $("#vowel").val(vowel).change()
+})
 
 $("#speaker").change(function () {
     speaker = this.value;
