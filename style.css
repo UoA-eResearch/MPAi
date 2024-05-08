@@ -21,6 +21,17 @@ canvas {
 	box-shadow: 0px 0px 10px;
 }
 
+#record {
+	border-radius: 50%;
+	width: 100px;
+	height: 100px;
+	text-align: center;
+	display: block;
+	margin: auto;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
 #record.recording {
 	background: red;
 	background: -webkit-radial-gradient(center, ellipse cover, #ff0000 0%, lightgrey 75%, lightgrey 100%, #7db9e8 100%);
@@ -47,4 +58,12 @@ canvas {
 	margin-top: 10px;
 	border: 1px solid black;
 	overflow: hidden;
+}
+
+@media (max-width: 600px) {
+  /* CSS rules for devices with a maximum width of 600px (mobile devices) */
+	#plot {
+		height: 500px;
+		max-width: 500px;
+	}
 }

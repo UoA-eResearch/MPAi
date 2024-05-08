@@ -444,12 +444,14 @@ window.addEventListener('keyup', event => {
     }
 })
 
-$("#record").on("mousedown touchstart", function () {
+$("#record").on("mousedown touchstart", function (e) {
     toggleRecording(this);
+    return false
 })
 
-$("#record").on("mouseup touchend", function () {
+$("#record").on("mouseup touchend", function (e) {
     toggleRecording(this);
+    return false
 })
 
 function cancelAnalyserUpdates() {
