@@ -40,8 +40,8 @@ canvas {
 }
 
 #plot {
-	height: 500px;
-	max-width: 500px;
+	height: 800px;
+	max-width: 800px;
 	text-align: center;
 	margin: auto;
 	margin-top: 10px;
