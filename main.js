@@ -138,7 +138,7 @@ function initPlot() {
                     showgrid: false,
                     zeroline: false,
                     //visible: false,
-                    range: [8, 2],
+                    range: [9, 2],
                     //title: "F1 (Bark)",
                     title: "Mouth Openness (F1)"
                 },
