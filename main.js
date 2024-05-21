@@ -181,7 +181,12 @@ $("#plot").click(function (evt) {
     }
     var vowel = trace.text[minIdx]
     console.log("Clicked", vowel, minDist)
-    $("#vowel").val(vowel).change()
+    var speaker = $("#speaker").val()
+    var filename = "samples/" + sample_lookup[`${speaker}|${vowel}`]
+    fetch(filename).then(r => r.blob()).then(async function(r) {
+        new Audio(URL.createObjectURL(r)).play()
+        await doneEncoding(r)
+    })
 })
 
 $("#speaker").change(function () {
