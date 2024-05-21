@@ -31,9 +31,9 @@
       collected as part of the MAONZE (Māori New Zealand English) project. MPAi uses responsive feedback according to
       your pronunciation to teach te reo Māori vowel pronunciation without the need for English references.<br>
       This javascript version is based on the application described in Watson et al. 2017<br>
-      Please select below whether you would like to model against a female or male kaumāutua speaker:
     </div>
   </div>
+  <div id="plot"></div>
   <div id="controls">
     Kaumātua Speaker:
     <select id="speaker" class="form-select">
@@ -50,14 +50,15 @@
     </select>
     <button id="play" class="btn btn-primary"><i class="bi bi-play"></i> Play</button>
     <button id="compare" class="btn btn-primary" disabled><i class="bi bi-arrow-left"></i> Compare</button>
-    <button id="erase" class="btn btn-primary"><i class="bi bi-eraser"></i> Erase previous dots</button>
+    <button id="erase" class="btn btn-primary"><i class="bi bi-eraser"></i> Erase previous dots</button><br>
+    <div id="viz_container">
+      <div id="viz">
+        <canvas id="analyser"></canvas>
+        <canvas id="wavedisplay"></canvas>
+      </div>
+    </div>
+    <button id="record" class="btn btn-primary"><i class="bi bi-mic"></i> Record</button>
   </div>
-  <div id="viz">
-    <canvas id="analyser"></canvas>
-    <canvas id="wavedisplay"></canvas>
-  </div>
-  <div id="plot"></div>
-  <button id="record" class="btn btn-primary"><i class="bi bi-mic"></i> Record</button>
   <div id="debug_plot"></div>
   <script src="main.js"></script>
 </body>

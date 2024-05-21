@@ -26,7 +26,7 @@ canvas {
 	width: 100px;
 	height: 100px;
 	text-align: center;
-	display: block;
+	display: inline-block;
 	margin: auto;
 	margin-top: 10px;
 	margin-bottom: 10px;
@@ -37,6 +37,11 @@ canvas {
 	background: -webkit-radial-gradient(center, ellipse cover, #ff0000 0%, lightgrey 75%, lightgrey 100%, #7db9e8 100%);
 	background: -moz-radial-gradient(center, ellipse cover, #ff0000 0%, lightgrey 75%, lightgrey 100%, #7db9e8 100%);
 	background: radial-gradient(center, ellipse cover, #ff0000 0%, lightgrey 75%, lightgrey 100%, #7db9e8 100%);
+}
+
+#viz_container {
+	display: inline-block;
+	max-width: 100px;
 }
 
 #viz {
