@@ -363,7 +363,10 @@ async function doneEncoding(blob) {
             results = results.filter(r => r["F0(Hz)"] > 0 && r["F1(Hz)"] > 0 && r["F2(Hz)"] > 0)
             if (results.length == 0) {
                 console.warn("No formants detected")
+                $("#status").html('<div class="alert alert-danger" role="alert">No formants detected - is your microphone working?</div>')
                 return
+            } else {
+                $("#status").text("")
             }
             console.log(`Time taken: ${performance.now() - start}ms`)
             console.log(results)
