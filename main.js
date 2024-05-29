@@ -163,6 +163,33 @@ function initPlot() {
 }
 initPlot()
 
+$("#plot").mousemove(function (evt) {
+    var bb = evt.target.getBoundingClientRect();
+    var l = this._fullLayout.margin.l;
+    var t = this._fullLayout.margin.t;
+    var x = this._fullLayout.xaxis.p2d(evt.originalEvent.clientX - bb.left - l);
+    var y = this._fullLayout.yaxis.p2d(evt.originalEvent.clientY - bb.top - t);
+    var trace = traces[traces.length - 2];
+    if (!trace) return;
+    var index = 0;
+    var minDist = Infinity;
+    for (var i = 0; i < trace.x.length; i++) {
+        var dist = Math.sqrt((trace.x[i] - x) ** 2 + (trace.y[i] - y) ** 2)
+        if (dist < minDist) {
+            minDist = dist;
+            index = i;
+        }
+    }
+    trace.marker.line.width = trace.x.map((x, i) => i == index ? 2 : 0)
+    Plotly.react('plot', traces, layout);
+
+    Plotly.Fx.hover('debug_plot',[
+        {curveNumber:0, pointNumber:index},
+        {curveNumber:1, pointNumber:index},
+        {curveNumber:2, pointNumber:index}
+    ]);
+})
+
 $("#plot").click(function (evt) {
     var bb = evt.target.getBoundingClientRect();
     var l = this._fullLayout.margin.l;
