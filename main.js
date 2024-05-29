@@ -375,6 +375,11 @@ async function doneEncoding(blob) {
                 y: results.map(r => hzToBark(r["F1(Hz)"])),
                 opacity: 1,
                 mode: 'markers',
+                marker: {
+                    line: {
+                        width: 0
+                    }
+                },
                 type: 'scatter',
                 hoverinfo: "none"
             };
@@ -390,8 +395,8 @@ async function doneEncoding(blob) {
             for (var k of keys) {
                 debug_traces.push({
                     x: results.map(r => r.time),
-                    y: results.map(r => r[k]),
-                    name: k
+                    y: results.map(r => hzToBark(r[k])),
+                    name: k.replace("(Hz)", "(Bark)")
                 })
             }
             var debug_layout = {
@@ -399,10 +404,19 @@ async function doneEncoding(blob) {
                     title: "Time (s)"
                 },
                 yaxis: {
-                    title: "Hz"
+                    title: "Bark scale frequency"
                 },
+                hovermode: "x"
             }
             Plotly.newPlot('debug_plot', debug_traces, debug_layout)//, {staticPlot: true});
+            debug_plot.on("plotly_hover", function (data) {
+                console.log(data);
+                var points = data.points
+                var time = points[0].x
+                var index = results.findIndex(r => r.time == time)
+                new_trace.marker.line.width = new_trace.x.map((x, i) => i == index ? 2 : 0)
+                Plotly.react('plot', traces, layout);
+            })
         })
     })
 }
