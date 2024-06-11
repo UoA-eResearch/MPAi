@@ -564,7 +564,7 @@ function updateAnalysers(time) {
 }
 
 // This is called after the user grants microphone permission, and the microphone is ready to use.
-function gotStream(stream) {
+async function gotStream(stream) {
     audioContext = new AudioContext();
     audioInput = audioContext.createMediaStreamSource(stream);
     analyserNode = audioContext.createAnalyser();
@@ -572,7 +572,26 @@ function gotStream(stream) {
     audioInput.connect(analyserNode);
     audioRecorder = new Recorder(audioInput);
     updateAnalysers();
+    var devices = await navigator.mediaDevices.enumerateDevices();
+    if ($("#mic > option").length == 0) {
+        for (var device of devices) {
+            if (device.kind == "audioinput") {
+                var selected = device.deviceId == "default" ? "selected": "";
+                $("#mic").append(`<option value="${device.deviceId}" ${selected}>${device.label}</option>`)
+            }
+        }
+    }
 }
+
+$("#mic").change(function () {
+    console.log(this.value)
+    navigator.mediaDevices.getUserMedia({ audio: {
+        deviceId: {exact: this.value},
+        autoGainControl: true,
+        echoCancellation: true,
+        noiseSuppression: true
+    } }).then(gotStream, onError);
+});
 
 function onError(e) {
     alert('Error getting audio');
