@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.plot.ly/plotly-2.31.1.min.js" charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"
+    integrity="sha512-dfX5uYVXzyU8+KHqj8bjo7UkOdg18PaOtpa48djpNbZHwExddghZ+ZmzWT06R5v6NSk3ZUfsH6FNEDepLx9hPQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script type="text/javascript" src="forest.js"></script> <!-- Formant Estimator -->
+  <script type="text/javascript" src="ksvF0.js"></script> <!-- Pitch Detector F0 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
+    integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+  <script src="recorder.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <title>MPAi.js</title>
+</head>
+
+<body>
+  <div id="welcome">
+    <h1>Kia ora!</h1>
+    <h2>Welcome to MPAi</h2>
+    <div>
+      MPAi is a Māori pronunciation tool which allows you to map your te reo Māori vowels to sounds produced by
+      kaumāutua (elder) speakers
+      collected as part of the MAONZE (Māori New Zealand English) project. MPAi uses responsive feedback according to
+      your pronunciation to teach te reo Māori vowel pronunciation without the need for English references.<br>
+      This javascript version is based on the application described in Watson et al. 2017<br>
+      Please select below whether you would like to model against a female or male kaumāutua speaker:
+    </div>
+  </div>
+</body>
+
+</html>

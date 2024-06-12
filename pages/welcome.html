@@ -1,0 +1,26 @@
+<script type="text/javascript">
+    console.log("Hello")
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('audiopermission', () => ({
+            getMicPermission(){
+                navigator.mediaDevices.getUserMedia({ audio: {
+                //numChannels: 1,
+                autoGainControl: true,
+                echoCancellation: true,
+                noiseSuppression: true
+            } }).then(function(){console.log("Got permission!"), function() {
+                console.log("Denied!")
+            }})
+            }
+        }))
+    });
+    </script>
+    <div class="d-flex flex-column h-100 flex-column justify-content-center">
+    <div class="text-center">
+    <img src="images/tiki_glasses_single.png" height="100px"/>
+    <p class="fs-4 mb-1">Kia ora, nau mai ki</p>
+    <h1 class="mb-3">MPAi - the Māori Pronunciation Aid</h1>
+    <p>MPAi can help compare your pronunciation of te reo Māori vowels to sounds produced by
+        kaumāutua (elder) speakers.</p>
+    </div>
+    </div>

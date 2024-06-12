@@ -1,0 +1,28 @@
+<script type="text/javascript">
+console.log("Hello")
+document.addEventListener('alpine:init', () => {
+    Alpine.data('audiopermission', () => ({
+        getMicPermission(){
+            navigator.mediaDevices.getUserMedia({ audio: {
+            //numChannels: 1,
+            autoGainControl: true,
+            echoCancellation: true,
+            noiseSuppression: true
+        } }).then(function(){console.log("Got permission!"), function() {
+            console.log("Denied!")
+        }})
+        }
+    }))
+});
+</script>
+<div x-init="canProceed = false" >
+<div class="d-flex align-items-center gap-3 mb-4">
+    <img src="images/tiki_glasses_single.png" height="60px">
+    <div class="flex-grow"><h1 class="fs-4">Please grant microphone permission, so I can hear you.</h1></div>
+</div>
+<p class="text-center">Your voice is processed on-device and no data is collected. If you are participating in one of our research studies, you can choose to record and send audio samples.</p>
+<div class="mt-5 d-grid gap-2 col-6 mx-auto">
+<a class="btn btn-secondary" @click="getMicPermission()">Grant microphone permission</a>
+
+</div>
+</div>

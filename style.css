@@ -1,9 +1,14 @@
-#welcome {
-	max-width: 90%;
-	margin: auto;
-	text-align: center;
-	font-size: 1.25vh;
+@media (min-width: 992px) and (min-height: 900px) { 
+	#doc {
+		height: 900px;
+	}
 }
+
+@media (max-width: 992px) or (max-height: 900px) { 
+	#doc {
+		height: 100vh;
+	}
+ }
 
 #controls {
 	text-align: center;
