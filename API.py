@@ -29,9 +29,13 @@ def make_safe_filename(s):
 @app.post("/")
 def upload(file: Annotated[bytes, File()], participant_id:str, password:str):
   if password == correct_password:
-    timestamp = datetime.now().strftime("%Y-%m-%d-%H_%M_%S")
-    os.makedirs("uploads", exist_ok=True)
-    open(f"uploads/{make_safe_filename(participant_id)}_{timestamp}.wav", "wb").write(file)
-    return {"status": "success"}
+    # 10MB max
+    if len(file) < 10 * 1024 * 1024:
+      timestamp = datetime.now().strftime("%Y-%m-%d-%H_%M_%S")
+      os.makedirs("uploads", exist_ok=True)
+      open(f"uploads/{make_safe_filename(participant_id)}_{timestamp}.wav", "wb").write(file)
+      return {"status": "success"}
+    else:
+      raise HTTPException(status_code=413, detail="File too large")
   else:
     raise HTTPException(status_code=403, detail="Incorrect password")
