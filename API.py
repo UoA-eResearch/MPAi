@@ -18,12 +18,20 @@ app.add_middleware(
 
 password = open("password.txt").read().strip()
 
+def make_safe_filename(s):
+    def safe_char(c):
+        if c.isalnum():
+            return c
+        else:
+            return "_"
+    return "".join(safe_char(c) for c in s).rstrip("_")
+
 @app.post("/")
 def upload(file: Annotated[bytes, File()], participant_id:str, password:str):
   if password == password:
     timestamp = datetime.now().strftime("%Y-%m-%d-%H_%M_%S")
     os.makedirs("uploads", exist_ok=True)
-    open(f"uploads/{participant_id}_{timestamp}.wav", "wb").write(file)
+    open(f"uploads/{make_safe_filename(participant_id)}_{timestamp}.wav", "wb").write(file)
     return {"status": "success"}
   else:
     raise HTTPException(status_code=403, detail="Incorrect password")
