@@ -350,7 +350,7 @@ const participant_id = urlParams.get('participant_id');
 
 async function doneEncoding(blob, post=true) {
     $("#compare").prop('disabled', false);
-    lastRecording = blob;
+    if (post) lastRecording = blob;
 
     //var audioUrl = URL.createObjectURL(blob);
     //audioRecorder.setupDownload( blob, "myRecording" + ((recIndex<10)?"0":"") + recIndex + ".wav" );
