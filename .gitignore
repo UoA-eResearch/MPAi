@@ -4,3 +4,4 @@ password.txt
 uploads
 __pycache__
 .vscode
+nohup.out
