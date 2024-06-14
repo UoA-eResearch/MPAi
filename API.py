@@ -16,7 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-password = open("password.txt").read().strip()
+correct_password = open("password.txt").read().strip()
 
 def make_safe_filename(s):
     def safe_char(c):
@@ -28,7 +28,7 @@ def make_safe_filename(s):
 
 @app.post("/")
 def upload(file: Annotated[bytes, File()], participant_id:str, password:str):
-  if password == password:
+  if password == correct_password:
     timestamp = datetime.now().strftime("%Y-%m-%d-%H_%M_%S")
     os.makedirs("uploads", exist_ok=True)
     open(f"uploads/{make_safe_filename(participant_id)}_{timestamp}.wav", "wb").write(file)
