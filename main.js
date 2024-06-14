@@ -212,7 +212,7 @@ $("#plot").click(function (evt) {
     var filename = "samples/" + sample_lookup[`${speaker}|${vowel}`]
     fetch(filename).then(r => r.blob()).then(async function(r) {
         new Audio(URL.createObjectURL(r)).play()
-        await doneEncoding(r)
+        await doneEncoding(r, false)
     })
 })
 
@@ -227,7 +227,7 @@ $("#vowel").change(function () {
     var filename = "samples/" + sample_lookup[`${speaker}|${vowel}`]
     fetch(filename).then(r => r.blob()).then(async function(r) {
         new Audio(URL.createObjectURL(r)).play()
-        await doneEncoding(r)
+        await doneEncoding(r, false)
     })
 });
 
@@ -348,7 +348,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const password = urlParams.get('password');
 const participant_id = urlParams.get('participant_id');
 
-async function doneEncoding(blob) {
+async function doneEncoding(blob, post=true) {
     $("#compare").prop('disabled', false);
     lastRecording = blob;
 
@@ -451,7 +451,7 @@ async function doneEncoding(blob) {
             })
         })
     })
-    if (password && participant_id) {
+    if (post && password && participant_id) {
         var form = new FormData();
         form.append("file", blob);
         try {
