@@ -13,8 +13,8 @@ export default {
     template: `
     <TopBar @prev-click="prevClicked()" />
     <div class="flex-fill">
-    <TikiMessage>Try pronouncing a vowel. What do you notice?</TikiMessage>
-    <p class="text-center">Experiment with different vowels, and try the Timeline view. When you're done, tap Continue.</p>
+    <TikiMessage>Try record yourself pronouncing a vowel.</TikiMessage>
+    <p class="text-center">Experiment with different vowels, and look at both views. What do you notice? When you're done, tap Continue.</p>
     <ul class="nav nav-pills nav-fill d-lg-none">
         <li class="nav-item">
             <a @click.prevent="changeDisplayedGraph('dotplot')" 
