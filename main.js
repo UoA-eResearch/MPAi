@@ -648,7 +648,7 @@ function initAudio() {
     return userMediaResult
 }
 
-// window.addEventListener('load', initAudio);
+window.addEventListener('load', initAudio);
 
 /*
 function convertToMono( input ) {

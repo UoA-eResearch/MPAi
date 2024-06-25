@@ -1,3 +1,10 @@
+#welcome {
+	max-width: 90%;
+	margin: auto;
+	text-align: center;
+	font-size: 1.25vh;
+}
+
 @media (min-width: 992px) and (min-height: 900px) { 
 	#doc {
 		height: 900px;
@@ -23,7 +30,7 @@ canvas {
 	display: inline-block;
 	background: #202020;
 	width: 95%;
-	height: 45%;
+	max-width: 100px;
 	box-shadow: 0px 0px 10px;
 }
 
@@ -47,7 +54,7 @@ canvas {
 
 #viz_container {
 	display: inline-block;
-	max-width: 400px;
+	max-width: 100px;
 }
 
 #viz {
