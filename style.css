@@ -30,7 +30,7 @@ canvas {
 	display: inline-block;
 	background: #202020;
 	width: 95%;
-	max-width: 100px;
+	height: 45%;
 	box-shadow: 0px 0px 10px;
 }
 
@@ -65,7 +65,7 @@ canvas {
 	text-align: center;
 	margin: auto;
 	margin-top: 10px;
-	height: 150px;
+	max-width: 100px;
 }
 
 #plot {
