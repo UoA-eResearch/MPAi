@@ -212,7 +212,7 @@ $("#plot").click(function (evt) {
     var filename = "samples/" + sample_lookup[`${speaker}|${vowel}`]
     fetch(filename).then(r => r.blob()).then(async function(r) {
         new Audio(URL.createObjectURL(r)).play()
-        await doneEncoding(r)
+        await doneEncoding(r, false)
     })
 })
 
@@ -227,7 +227,7 @@ $("#vowel").change(function () {
     var filename = "samples/" + sample_lookup[`${speaker}|${vowel}`]
     fetch(filename).then(r => r.blob()).then(async function(r) {
         new Audio(URL.createObjectURL(r)).play()
-        await doneEncoding(r)
+        await doneEncoding(r, false)
     })
 });
 
@@ -343,9 +343,14 @@ function parse_F0(xassp) {
 ksvF0({arguments:["-X"]})
 forest({arguments:["-X"]})
 
-async function doneEncoding(blob) {
+// https://api-proxy.auckland-cer.cloud.edu.au/MPAi_API/docs#/default/upload__post
+const urlParams = new URLSearchParams(window.location.search);
+const password = urlParams.get('password');
+const participant_id = urlParams.get('participant_id');
+
+async function doneEncoding(blob, post=true) {
     $("#compare").prop('disabled', false);
-    lastRecording = blob;
+    if (post) lastRecording = blob;
 
     //var audioUrl = URL.createObjectURL(blob);
     //audioRecorder.setupDownload( blob, "myRecording" + ((recIndex<10)?"0":"") + recIndex + ".wav" );
@@ -446,6 +451,26 @@ async function doneEncoding(blob) {
             })
         })
     })
+    if (post && password && participant_id) {
+        var form = new FormData();
+        form.append("file", blob);
+        try {
+            await fetch(`https://api-proxy.auckland-cer.cloud.edu.au/MPAi_API/?password=${password}&participant_id=${participant_id}`, {
+                method: "POST",
+                body: form
+            }).then(r => r.json()).then(r => {
+                console.log(r)
+                if (r.status == "success") {
+                    $("#upload_status").html('<div class="alert alert-success" role="alert">Recording uploaded successfully</div>')
+                } else {
+                    $("#upload_status").html(`<div class="alert alert-danger" role="alert">Error uploading recording: ${r.detail}</div>`)
+                }
+            })
+        } catch (e) {
+            console.error(e)
+            $("#upload_status").html('<div class="alert alert-danger" role="alert">Error uploading recording</div>')
+        }
+    }
 }
 
 function toggleRecording(e) {
@@ -564,7 +589,7 @@ function updateAnalysers(time) {
 }
 
 // This is called after the user grants microphone permission, and the microphone is ready to use.
-function gotStream(stream) {
+async function gotStream(stream) {
     audioContext = new AudioContext();
     audioInput = audioContext.createMediaStreamSource(stream);
     analyserNode = audioContext.createAnalyser();
@@ -572,7 +597,32 @@ function gotStream(stream) {
     audioInput.connect(analyserNode);
     audioRecorder = new Recorder(audioInput);
     updateAnalysers();
+    var devices = await navigator.mediaDevices.enumerateDevices();
+    if ($("#mic > option").length == 0) {
+        for (var device of devices) {
+            if (device.kind == "audioinput") {
+                var selected = device.deviceId == "default" ? "selected": "";
+                $("#mic").append(`<option value="${device.deviceId}" ${selected}>${device.label}</option>`)
+            }
+        }
+    }
 }
+
+$("#mic").change(function () {
+    console.log(this.value)
+    navigator.mediaDevices.getUserMedia({ audio: {
+        deviceId: {exact: this.value},
+        autoGainControl: true,
+        echoCancellation: true,
+        noiseSuppression: true
+    } }).then(gotStream, onError);
+});
+
+function onError(e) {
+    alert('Error getting audio');
+    console.log(e);
+}
+
 function initAudio() {
     // One-liner to resume playback when user interacted with the page.
     $(window).on('mousedown keydown touchstart', function () {

@@ -1,2 +1,7 @@
 MPAi_RShiny-main/
 *.fms
+password.txt
+uploads
+__pycache__
+.vscode
+nohup.out
