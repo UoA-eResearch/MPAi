@@ -648,8 +648,6 @@ function initAudio() {
     return userMediaResult
 }
 
-window.addEventListener('load', initAudio);
-
 /*
 function convertToMono( input ) {
     var splitter = audioContext.createChannelSplitter(2);

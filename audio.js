@@ -1,3 +1,5 @@
+// Extracted audio code from main.js.
+
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
 var audioContext = new AudioContext();
