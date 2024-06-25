@@ -573,12 +573,6 @@ function gotStream(stream) {
     audioRecorder = new Recorder(audioInput);
     updateAnalysers();
 }
-
-function onError(e) {
-    alert('Error getting audio');
-    console.log(e);
-}
-
 function initAudio() {
     // One-liner to resume playback when user interacted with the page.
     $(window).on('mousedown keydown touchstart', function () {
@@ -594,15 +588,17 @@ function initAudio() {
     if (!navigator.requestAnimationFrame)
         navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
 
-    navigator.mediaDevices.getUserMedia({ audio: {
+    const userMediaResult = navigator.mediaDevices.getUserMedia({ audio: {
         //numChannels: 1,
         autoGainControl: true,
         echoCancellation: true,
         noiseSuppression: true
-    } }).then(gotStream, onError);
+    } });
+    userMediaResult.then(gotStream);
+    return userMediaResult
 }
 
-window.addEventListener('load', initAudio);
+// window.addEventListener('load', initAudio);
 
 /*
 function convertToMono( input ) {
