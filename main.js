@@ -455,7 +455,7 @@ async function doneEncoding(blob, post=true) {
         var form = new FormData();
         form.append("file", blob);
         try {
-            await fetch(`https://api-proxy.auckland-cer.cloud.edu.au/MPAi_API/?password=${password}&participant_id=${participant_id}`, {
+            await fetch(`https://api-proxy.auckland-cer.cloud.edu.au/MPAi_API/?password=${password}&participant_id=${participant_id}_${$("#vowel").val()}`, {
                 method: "POST",
                 body: form
             }).then(r => r.json()).then(r => {
