@@ -58,15 +58,19 @@ export default {
             window.location.hash = "/";
         },
         handleRecordPressed() {
-            this.isRecording = true;
-            startRecording();
+            if (!this.isRecording) {
+                this.isRecording = true;
+                startRecording();
+            }
         },
         handleRecordReleased() {
-            this.isRecording = false;
-            stopRecording();
+            if (this.isRecording) {
+                this.isRecording = false;
+                stopRecording();
+            }
         },
         handleSpacePressed(event) {
-            if (event.code === 'Space') {
+            if (event.code === 'Space' && !this.isRecording) {
                 this.isRecording = true;
                 startRecording();   
             }
