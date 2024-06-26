@@ -13,7 +13,7 @@ export default {
             kaumātua and kuia (elder) speakers.</p>
       </div>
     </div>
-    <BottomBar :isContinueEnabled="true" @continueClick="goNext()"> 
+    <BottomBar :isContinueEnabled="true" @continueClick="goNext()" /> 
     `,
     methods: {
       goNext () {

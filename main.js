@@ -644,7 +644,7 @@ function initAudio() {
         echoCancellation: true,
         noiseSuppression: true
     } });
-    userMediaResult.then(gotStream);
+    userMediaResult.then(gotStream, onError);
     return userMediaResult
 }
 

@@ -1,12 +1,14 @@
 import TopBar from "../components/TopBar.js";
 import TikiMessage from "../components/TikiMessage.js";
 import BottomBar from "../components/BottomBar.js";
-import { initPlot } from "../audio.js";
+// import { initialisePlots, startRecording, stopRecording } from "../audio.js";
+
 
 export default {
     data() {
         return {
-            graphDisplayed: "dotplot"
+            graphDisplayed: "dotplot",
+            isRecording: false
         }
     },
     components: {TopBar, TikiMessage, BottomBar},    
@@ -39,7 +41,14 @@ export default {
         <div id="debug_plot" class="d-lg-block" :class="{'d-none': graphDisplayed === 'dotplot'}" ref="timeline"></div>
     </div>
     <div class="text-center">
-        <button id="record" class="btn btn-primary"><i class="bi bi-mic"></i>Record</button>
+        <button 
+            id="record"
+            @mousedown="handleRecordPressed"
+            @touchstart="handleRecordPressed"
+            @mouseup="handleRecordReleased"
+            @touchend="handleRecordReleased"
+            :class="{recording: isRecording}"
+            class="btn btn-primary"><i class="bi bi-mic"></i>Record</button>
     </div>
     </div>
     <BottomBar :isContinueEnabled="false" />
@@ -48,22 +57,40 @@ export default {
         prevClicked() {
             window.location.hash = "/";
         },
+        handleRecordPressed() {
+            this.isRecording = true;
+            startRecording();
+        },
+        handleRecordReleased() {
+            this.isRecording = false;
+            stopRecording();
+        },
+        handleSpacePressed(event) {
+            if (event.code === 'Space') {
+                this.isRecording = true;
+                startRecording();   
+            }
+        },
+        handleSpaceReleased(event) {
+            if (event.code === 'Space') {
+                this.isRecording = false;
+                stopRecording();
+            }
+        },
         changeDisplayedGraph(graphName) {
             this.graphDisplayed = graphName;
             // Hack to temporarily fix buggy labels.
-            initPlot(this.$refs.dotplot);
+            initialisePlots(this.$refs.dotplot, this.$refs.timeline);
         }
     },
     mounted() {
-        initPlot(this.$refs.dotplot);
-        Plotly.newPlot(this.$refs.timeline, [], {
-            xaxis: {
-                title: "Time (s)"
-            },
-            yaxis: {
-                title: "Bark scale frequency"
-            },
-            hovermode: "x"
-        });
+        initialisePlots(this.$refs.dotplot, this.$refs.timeline);
+
+        window.addEventListener('keydown', this.handleSpacePressed);
+        window.addEventListener('keyup', this.handleSpaceReleased);
+    },
+    unmounted() {
+        window.removeEventListener('keydown', this.handleSpacePressed);
+        window.removeEventListener('keyup', this.handleSpaceReleased);
     }
 };

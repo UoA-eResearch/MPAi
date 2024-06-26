@@ -1,0 +1,30 @@
+@media (min-width: 992px) and (min-height: 900px) { 
+	#doc {
+		height: 900px;
+	}
+}
+
+@media (max-width: 992px) or (max-height: 900px) { 
+	#doc {
+		height: 100vh;
+	}
+ }
+
+ #analyzer {
+    width: 100%;
+ }
+
+ #record {
+	border-radius: 50%;
+    width: 100px;
+	height: 100px;
+	text-align: center;
+
+ }
+
+ #record.recording {
+	background: red;
+	background: -webkit-radial-gradient(center, ellipse cover, #ff0000 0%, lightgrey 75%, lightgrey 100%, #7db9e8 100%);
+	background: -moz-radial-gradient(center, ellipse cover, #ff0000 0%, lightgrey 75%, lightgrey 100%, #7db9e8 100%);
+	background: radial-gradient(center, ellipse cover, #ff0000 0%, lightgrey 75%, lightgrey 100%, #7db9e8 100%);
+}
