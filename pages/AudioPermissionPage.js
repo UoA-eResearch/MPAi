@@ -5,7 +5,7 @@ import TikiMessage from "../components/TikiMessage.js";
 import { config } from '../store.js'
 
 export default {
-    components: {TopBar, BottomBar, TikiMessage},    
+    components: { TopBar, BottomBar, TikiMessage },
     template: `
         <TopBar @prev-click="prevClicked()" />
         <div class="flex-fill">
@@ -16,7 +16,7 @@ export default {
             <p class="text-center" v-if="!hasGrantedPermission">Your microphone is used to listen to your pronunciation so analysis and comparison can happen. Your voice is processed on your device and no data is collected. If you are participating in one of our research studies, you can choose to record and send audio samples.</p>
             <p class="text-center" v-if="hasGrantedPermission">If nothing is showing on the monitor when you say something, try changing the microphone below.</p>
             <div class="mt-3 d-flex flex-column gap-2 col-lg-6 justify-content-center mx-auto">
-                <a class="btn btn-secondary" @click="getMicPermission()" :class="{'d-none': hasGrantedPermission}">Grant microphone permission</a>
+            <a class="btn btn-secondary" @click="getMicPermission()" :class="{'d-none': hasGrantedPermission}">Grant microphone permission</a>
                 <template v-if="hasGrantedPermission">
                     <canvas id="analyser" style="background-color: lightgray;" :ref="analyserVisibilityChanged"></canvas>
                     <h2 class="fs-6 mb-0 mt-3">Choose a Microphone</h2>
@@ -43,7 +43,16 @@ export default {
             window.location.hash = "/";
         },
         nextClick() {
-            window.location.hash = "/playground"
+            const searchStr = new URLSearchParams(window.location.search);
+            if (!searchStr.has("next")) {
+                window.location.hash = "/playground"
+            } else {
+                // Remove the next url first before redirecting.
+                const nextUrl = searchStr.get("next");
+                searchStr.delete("next");
+                window.location.search = searchStr.toString();
+                window.location.hash = nextUrl;
+            }
         },
         analyserVisibilityChanged(element) {
             if (!element) {
@@ -51,7 +60,7 @@ export default {
             }
             updateAnalysers(element);
         },
-        getMicPermission(){
+        getMicPermission() {
             initAudio().then(() => {
                 this.hasGrantedPermission = true;
                 navigator.mediaDevices.enumerateDevices().then((devices) => {
@@ -60,8 +69,8 @@ export default {
                     // Sets default device to be the initial selected device.
                     const defaultDevice = this.inputDevices.find(device => device.deviceId === "default")
                     this.config.audioInput = defaultDevice ? "default" : this.inputDevices[0].deviceId;
-                }, () => {console.log("Failed to enumerate devices.")});
-            },() => {
+                }, () => { console.log("Failed to enumerate devices.") });
+            }, () => {
                 this.hasGrantedPermission = false;
             });
 

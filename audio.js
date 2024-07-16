@@ -25,19 +25,21 @@ function hzToBark(freqHz) {
 }
 
 // export function initialisePlots(scatterElement,timelineEl) {
-function initialisePlots(scatterElement,timelineEl) {
+function initialisePlots(scatterElement, timelineEl) {
     initScatterplot(scatterElement);
-    Plotly.newPlot(timelineEl, [], {
-        xaxis: {
-            title: "Time (s)"
-        },
-        yaxis: {
-            title: "Bark scale frequency"
-        },
-        hovermode: "x"
-    });
-    scatterplotElement = scatterElement;
     timelineElement = timelineEl;
+    if (timelineEl) {
+        Plotly.newPlot(timelineEl, [], {
+            xaxis: {
+                title: "Time (s)"
+            },
+            yaxis: {
+                title: "Bark scale frequency"
+            },
+            hovermode: "x"
+        });
+        scatterplotElement = scatterElement;
+    }
 }
 
 // export function initScatterplot(plotElement) {
@@ -162,10 +164,10 @@ function initScatterplot(plotElement) {
                 showlegend: false
             }
             Plotly.newPlot(plotElement, traces, layout, {
-               displayModeBar: false,
-               doubleClick: false,
-               staticPlot: true,
-               responsive: true
+                displayModeBar: false,
+                doubleClick: false,
+                staticPlot: true,
+                responsive: true
             })
         }
     });
@@ -244,12 +246,14 @@ function onError(e) {
 
 // export function updateInputSource(inputId) {
 function updateInputSource(inputId) {
-    navigator.mediaDevices.getUserMedia({ audio: {
-        deviceId: {exact: inputId},
-        autoGainControl: true,
-        echoCancellation: true,
-        noiseSuppression: true
-    } }).then(gotStream, onError);
+    navigator.mediaDevices.getUserMedia({
+        audio: {
+            deviceId: { exact: inputId },
+            autoGainControl: true,
+            echoCancellation: true,
+            noiseSuppression: true
+        }
+    }).then(gotStream, onError);
 
 }
 
@@ -268,7 +272,7 @@ function initAudio() {
     }
 
     window.addEventListener('mousedown', resumePlayback);
-    window.addEventListener('keydown' , resumePlayback);
+    window.addEventListener('keydown', resumePlayback);
     window.addEventListener('touchstart', resumePlayback);
 
     if (!navigator.cancelAnimationFrame)
@@ -276,11 +280,13 @@ function initAudio() {
     if (!navigator.requestAnimationFrame)
         navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
 
-    const userMediaResult = navigator.mediaDevices.getUserMedia({ audio: {
-        autoGainControl: true,
-        echoCancellation: true,
-        noiseSuppression: true
-    } });
+    const userMediaResult = navigator.mediaDevices.getUserMedia({
+        audio: {
+            autoGainControl: true,
+            echoCancellation: true,
+            noiseSuppression: true
+        }
+    });
     userMediaResult.then(gotStream, onError);
     return userMediaResult;
 }
@@ -292,8 +298,8 @@ function startRecording() {
 }
 
 // Cache WASM
-ksvF0({arguments:["-X"]})
-forest({arguments:["-X"]})
+ksvF0({ arguments: ["-X"] })
+forest({ arguments: ["-X"] })
 
 
 function parse_FMS(fms) {
@@ -331,7 +337,7 @@ function parse_F0(xassp) {
     return results;
 }
 
-async function doneEncoding(blob, post=true) {
+async function doneEncoding(blob, post = true) {
     // $("#compare").prop('disabled', false);
     if (post) lastRecording = blob;
 
@@ -342,7 +348,7 @@ async function doneEncoding(blob, post=true) {
     content = new Uint8Array(content)
     var start = performance.now()
 
-    ksvF0({noInitialRun: true}).then(async function(Module) {
+    ksvF0({ noInitialRun: true }).then(async function (Module) {
         Module.FS.writeFile("1.wav", content)
         var args = [
             "1.wav", // input file
@@ -354,8 +360,8 @@ async function doneEncoding(blob, post=true) {
             args.push("-g=m")
         }
         Module.callMain(args)
-        var pitch_results = parse_F0(Module.FS.readFile("1.f0", {encoding: "utf8"}))
-        forest({noInitialRun: true}).then(async function(Module) {
+        var pitch_results = parse_F0(Module.FS.readFile("1.f0", { encoding: "utf8" }))
+        forest({ noInitialRun: true }).then(async function (Module) {
             Module.FS.writeFile("1.wav", content)
             var args = [
                 "1.wav", // input file
@@ -370,7 +376,7 @@ async function doneEncoding(blob, post=true) {
                 args.push("-f")
             }
             Module.callMain(args)
-            var results = parse_FMS(Module.FS.readFile("1.fms", {encoding: "utf8"}))
+            var results = parse_FMS(Module.FS.readFile("1.fms", { encoding: "utf8" }))
             console.log(results)
             for (var i = 0; i < results.length; i++) {
                 results[i]["F0(Hz)"] = pitch_results[i]["F0(Hz)"]
@@ -380,8 +386,8 @@ async function doneEncoding(blob, post=true) {
                 console.warn("No formants detected")
                 // $("#status").html('<div class="alert alert-danger" role="alert">No formants detected - is your microphone working?</div>')
                 return
-            // } else {
-            //     $("#status").text("")
+                // } else {
+                //     $("#status").text("")
             }
             console.log(`Time taken: ${performance.now() - start}ms`)
             console.log(results)
@@ -423,15 +429,17 @@ async function doneEncoding(blob, post=true) {
                 },
                 hovermode: "x"
             }
-            Plotly.newPlot(timelineElement, debug_traces, debug_layout)//, {staticPlot: true});
-            timelineElement.addEventListener("plotly_hover", function (data) {
-                console.log(data);
-                var points = data.points
-                var time = points[0].x
-                var index = results.findIndex(r => r.time == time)
-                new_trace.marker.line.width = new_trace.x.map((x, i) => i == index ? 2 : 0)
-                Plotly.react(scatterplotElement, traces, layout);
-            })
+            if (timelineElement) {
+                Plotly.newPlot(timelineElement, debug_traces, debug_layout)//, {staticPlot: true});
+                timelineElement.addEventListener("plotly_hover", function (data) {
+                    console.log(data);
+                    var points = data.points
+                    var time = points[0].x
+                    var index = results.findIndex(r => r.time == time)
+                    new_trace.marker.line.width = new_trace.x.map((x, i) => i == index ? 2 : 0)
+                    Plotly.react(scatterplotElement, traces, layout);
+                });
+            }
         })
     })
     // if (post && password && participant_id) {

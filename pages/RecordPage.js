@@ -1,13 +1,14 @@
 import TopBar from "../components/TopBar.js";
 import TikiMessage from "../components/TikiMessage.js";
 import BottomBar from "../components/BottomBar.js";
-// import { initialisePlots, startRecording, stopRecording } from "../audio.js";
-
+import { config } from "../store.js";
 
 export default {
     data() {
         return {
-            graphDisplayed: "dotplot",
+            vowel: "a",
+            sound: "ta",
+            config,
             isRecording: false
         }
     },
@@ -15,30 +16,9 @@ export default {
     template: `
     <TopBar @prev-click="prevClicked()" />
     <div class="flex-fill">
-    <TikiMessage>Try record yourself pronouncing a vowel.</TikiMessage>
-    <p class="text-center">Experiment with different vowels, and look at both views. What do you notice? When you're done, tap Continue.</p>
-    <ul class="nav nav-pills nav-fill d-lg-none">
-        <li class="nav-item">
-            <a @click.prevent="changeDisplayedGraph('dotplot')" 
-            class="nav-link"
-            :class="{'active': graphDisplayed === 'dotplot'}"
-            :aria-current="graphDisplayed === 'dotplot'"
-            href="">
-            Dot Plot
-            </a>
-        </li>
-        <li class="nav-item">
-        <a @click.prevent="changeDisplayedGraph('timeline')" 
-            :class="{'active': graphDisplayed === 'timeline'}"
-            :aria-current="graphDisplayed === 'timeline'"
-            class="nav-link"
-            href=""
-        >Timeline</a>
-        </li>
-    </ul>
-    <div class="d-flex">
-        <div id="plot" class="d-lg-block" :class="{'d-none': graphDisplayed === 'timeline'}" ref="dotplot" style="width:100%;"></div>
-        <div id="debug_plot" class="d-lg-block" :class="{'d-none': graphDisplayed === 'dotplot'}" ref="timeline"></div>
+    <TikiMessage>Try to pronounce <strong>{{sound}}</strong>.</TikiMessage>
+    <div class="d-flex justify-content-center">
+        <div id="plot" class="d-block w-75" ref="dotplot" style="width:100%; height: 600px;"></div>
     </div>
     <div class="text-center">
         <button 
@@ -50,15 +30,13 @@ export default {
             :class="{recording: isRecording}"
             class="btn btn-primary"><i class="bi bi-mic"></i>Record</button>
     </div>
+
     </div>
-    <BottomBar @continue-click="nextClick()" :isContinueEnabled="true" />
+    <BottomBar :isContinueEnabled="false" />
     `,
     methods: {
         prevClicked() {
-            window.location.hash = "/";
-        },
-        nextClick() {
-            window.location.hash = "/record";
+            window.location.hash = "/playground";
         },
         handleRecordPressed() {
             if (!this.isRecording) {
@@ -83,15 +61,15 @@ export default {
                 this.isRecording = false;
                 stopRecording();
             }
-        },
-        changeDisplayedGraph(graphName) {
-            this.graphDisplayed = graphName;
-            // Hack to temporarily fix buggy labels.
-            initialisePlots(this.$refs.dotplot, this.$refs.timeline);
         }
     },
     mounted() {
-        initialisePlots(this.$refs.dotplot, this.$refs.timeline);
+        // if (!this.config.audioInput) {
+        //     // If no audio input is configured yet, prompt for input first.
+        //     window.location.search = "next=/record"
+        //     window.location.hash = "/audiopermission"
+        // }
+        initialisePlots(this.$refs.dotplot, null);
 
         window.addEventListener('keydown', this.handleSpacePressed);
         window.addEventListener('keyup', this.handleSpaceReleased);
@@ -100,4 +78,4 @@ export default {
         window.removeEventListener('keydown', this.handleSpacePressed);
         window.removeEventListener('keyup', this.handleSpaceReleased);
     }
-};
+}
