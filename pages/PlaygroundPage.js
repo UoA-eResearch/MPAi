@@ -76,7 +76,7 @@ export default {
             }
         },
         handleSpaceReleased(event) {
-            if (event.code === 'Space') {
+            if (event.code === 'Space' && this.isRecording) {
                 this.isRecording = false;
                 stopRecording();
             }
