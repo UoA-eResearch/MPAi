@@ -40,18 +40,13 @@ export default {
     `,
     methods: {
         prevClicked() {
-            window.location.hash = "/";
+            this.$router.replace("/");
         },
         nextClick() {
-            const searchStr = new URLSearchParams(window.location.search);
-            if (!searchStr.has("next")) {
-                window.location.hash = "/playground"
+            if (this.$route.redirectedFrom) {
+                this.$router.push(this.$route.redirectedFrom);
             } else {
-                // Remove the next url first before redirecting.
-                const nextUrl = searchStr.get("next");
-                searchStr.delete("next");
-                window.location.search = searchStr.toString();
-                window.location.hash = nextUrl;
+                this.$router.push({ name: "playground" });
             }
         },
         analyserVisibilityChanged(element) {
@@ -73,7 +68,6 @@ export default {
             }, () => {
                 this.hasGrantedPermission = false;
             });
-
         },
         audioInputChanged(newInputId) {
             updateInputSource(newInputId);

@@ -1,62 +1,34 @@
-import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 import WelcomePage from './pages/WelcomePage.js';
 import AudioPermissionPage from './pages/AudioPermissionPage.js';
 import PlaygroundPage from './pages/PlaygroundPage.js';
 import RecordPage from './pages/RecordPage.js';
+import { config } from './store.js';
 
-const routes = {
-    '/': WelcomePage,
-    '/audiopermission': AudioPermissionPage,
-    '/playground': PlaygroundPage,
-    '/record': RecordPage
+/**
+ * Navigation guard to ensure audio permission is obtained and default audio device is selected.
+ * @param {object} to Path to navigate to
+ * @param {object} from Path to navigate from
+ * @returns If check succeeds, returns true, otherwise returns audio permission route.
+ */
+function checkAudioPermission(to, from) {
+    if (!config.audioInput) {
+        return { name: 'audiopermission' };
+    }
+    return true;
 }
 
-const app = createApp({
-    data() {
-        return {
-            currentPath: window.location.hash,
-            canProceed: true
-        }
-    },
-    computed: {
-        currentView() {
-            return routes[this.currentPath.slice(1) || '/'] || NotFound
-        },
-        isOnFirstPage() {
-            console.log(this.currentPath);
-            return this.currentPath.slice(1) === "/" || this.currentPath === '';
-        }
-    },
-    mounted() {
-        window.addEventListener('hashchange', () => {
-            this.currentPath = window.location.hash
-        });
+const appRoutes = [
+    { name: 'welcome', path: '/', component: WelcomePage },
+    { name: 'audiopermission', path: '/audiopermission', component: AudioPermissionPage },
+    { name: 'playground', path: '/playground', component: PlaygroundPage, beforeEnter: checkAudioPermission },
+    { name: 'record', path: '/record', component: RecordPage, beforeEnter: checkAudioPermission }
+];
 
-    },
-    methods: {
-        goPreviousPage() {
-            const routeUris = Object.keys(routes);
-            const currentRouteIdx = routeUris.indexOf(this.currentPath.slice(1) || '/');
-            const previousIdx = currentRouteIdx - 1;
-            if (currentRouteIdx === -1 || previousIdx == -1) {
-                return;
-            }
-            window.location.hash = routeUris[previousIdx];
-        },
-        goNextPage() {
-            if (!this.canProceed) {
-                return;
-            }
-            const routeUris = Object.keys(routes);
-            const currentRouteIdx = routeUris.indexOf(this.currentPath.slice(1) || '/');
-            const nextIdx = currentRouteIdx + 1;
-            if (currentRouteIdx === -1 || nextIdx > (routeUris.length - 1)) {
-                return;
-            }
-            window.location.hash = routeUris[currentRouteIdx + 1];
-
-
-        }
-    }
+const router = VueRouter.createRouter({
+    history: VueRouter.createWebHashHistory(),
+    routes: appRoutes
 });
-app.mount("#doc")
+
+const app = Vue.createApp({});
+app.use(router);
+app.mount("#doc");

@@ -2,8 +2,8 @@ import BottomBar from "../components/BottomBar.js";
 
 
 export default {
-  components: {BottomBar},
-    template: `
+  components: { BottomBar },
+  template: `
     <div class="d-flex flex-column h-100 flex-column justify-content-center">
       <div class="text-center">
         <img src="images/tiki_glasses_single.png" height="100px"/>
@@ -15,13 +15,9 @@ export default {
     </div>
     <BottomBar :isContinueEnabled="true" @continueClick="goNext()" /> 
     `,
-    methods: {
-      goNext () {
-        window.location.hash = "/audiopermission"
-      }
-    },
-    mounted() {
-      // `this` refers to the component instance.
-  
+  methods: {
+    goNext() {
+      this.$router.push({ name: "audiopermission" });
     }
-  }
+  },
+}

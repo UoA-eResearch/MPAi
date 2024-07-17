@@ -36,7 +36,7 @@ export default {
     `,
     methods: {
         prevClicked() {
-            window.location.hash = "/playground";
+            this.$router.replace({ name: "playground" });
         },
         handleRecordPressed() {
             if (!this.isRecording) {
@@ -64,13 +64,7 @@ export default {
         }
     },
     mounted() {
-        // if (!this.config.audioInput) {
-        //     // If no audio input is configured yet, prompt for input first.
-        //     window.location.search = "next=/record"
-        //     window.location.hash = "/audiopermission"
-        // }
         initialisePlots(this.$refs.dotplot, null);
-
         window.addEventListener('keydown', this.handleSpacePressed);
         window.addEventListener('keyup', this.handleSpaceReleased);
     },

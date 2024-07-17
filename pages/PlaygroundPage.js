@@ -55,10 +55,10 @@ export default {
     `,
     methods: {
         prevClicked() {
-            window.location.hash = "/";
+            this.$router.replace("/")
         },
         nextClick() {
-            window.location.hash = "/record";
+            this.$router.push({ name: "record" });
         },
         handleRecordPressed() {
             if (!this.isRecording) {
