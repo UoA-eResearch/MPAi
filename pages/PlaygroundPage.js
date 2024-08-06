@@ -1,7 +1,7 @@
 import TopBar from "../components/TopBar.js";
 import TikiMessage from "../components/TikiMessage.js";
 import BottomBar from "../components/BottomBar.js";
-// import { initialisePlots, startRecording, stopRecording } from "../audio.js";
+import { initialisePlots, startRecording, stopRecording } from "../audio.js";
 
 
 export default {
@@ -92,7 +92,6 @@ export default {
     },
     mounted() {
         initialisePlots(this.$refs.dotplot, this.$refs.timeline);
-
         window.addEventListener('keydown', this.handleSpacePressed);
         window.addEventListener('keyup', this.handleSpaceReleased);
     },

@@ -2,6 +2,7 @@ import TopBar from "../components/TopBar.js";
 import TikiMessage from "../components/TikiMessage.js";
 import BottomBar from "../components/BottomBar.js";
 import { config } from "../store.js";
+import { startRecording, stopRecording, initialisePlots } from '../audio.js';
 
 export default {
     data() {

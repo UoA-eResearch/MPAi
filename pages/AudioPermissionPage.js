@@ -1,7 +1,7 @@
 import TopBar from "../components/TopBar.js";
 import BottomBar from "../components/BottomBar.js";
 import TikiMessage from "../components/TikiMessage.js";
-// import { updateAnalysers, initAudio, updateInputSource } from "../audio.js";
+import { updateAnalysers, initAudio, updateInputSource } from "../audio.js";
 import { config } from '../store.js'
 
 export default {

@@ -2,7 +2,7 @@
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
-var audioContext = new AudioContext();
+var audioContext = null;//new AudioContext();
 var audioInput = null,
     realAudioInput = null,
     inputPoint = null,
@@ -24,9 +24,10 @@ function hzToBark(freqHz) {
     return bark
 }
 
-// export function initialisePlots(scatterElement,timelineEl) {
-function initialisePlots(scatterElement, timelineEl) {
+export function initialisePlots(scatterElement, timelineEl) {
+    // function initialisePlots(scatterElement, timelineEl) {
     initScatterplot(scatterElement);
+    scatterplotElement = scatterElement;
     timelineElement = timelineEl;
     if (timelineEl) {
         Plotly.newPlot(timelineEl, [], {
@@ -38,12 +39,11 @@ function initialisePlots(scatterElement, timelineEl) {
             },
             hovermode: "x"
         });
-        scatterplotElement = scatterElement;
     }
 }
 
-// export function initScatterplot(plotElement) {
-function initScatterplot(plotElement) {
+export function initScatterplot(plotElement) {
+    // function initScatterplot(plotElement) {
     Papa.parse("kaumatua_monoVowel_formantData.csv", {
         header: true,
         download: true,
@@ -173,8 +173,8 @@ function initScatterplot(plotElement) {
     });
 }
 
-// export function updateAnalysers(analyserElement) {
-function updateAnalysers(analyserElement) {
+export function updateAnalysers(analyserElement) {
+    // function updateAnalysers(analyserElement) {
     if (!analyserContext) {
         canvasWidth = analyserElement.width;
         canvasHeight = analyserElement.height;
@@ -244,8 +244,8 @@ function onError(e) {
     console.log(e);
 }
 
-// export function updateInputSource(inputId) {
-function updateInputSource(inputId) {
+export function updateInputSource(inputId) {
+    // function updateInputSource(inputId) {
     navigator.mediaDevices.getUserMedia({
         audio: {
             deviceId: { exact: inputId },
@@ -261,8 +261,8 @@ function updateInputSource(inputId) {
  * 
  * @returns {Promise<MediaStream>} A Promise of media stream
  */
-// export function initAudio() {
-function initAudio() {
+export function initAudio() {
+    // function initAudio() {
     // One-liner to resume playback when user interacted with the page.
     function resumePlayback() {
         if (audioContext.state == 'suspended')
@@ -291,8 +291,8 @@ function initAudio() {
     return userMediaResult;
 }
 
-// export function startRecording() {
-function startRecording() {
+export function startRecording() {
+    // function startRecording() {
     audioRecorder.clear();
     audioRecorder.record();
 }
@@ -478,8 +478,8 @@ function gotBuffers(buffers) {
     audioRecorder.exportMonoWAV(doneEncoding);
 }
 
-// export function stopRecording() {
-function stopRecording() {
+export function stopRecording() {
+    // function stopRecording() {
     audioRecorder.stop();
     audioRecorder.getBuffers(gotBuffers);
 }
