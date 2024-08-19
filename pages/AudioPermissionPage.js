@@ -55,19 +55,22 @@ export default {
             }
             updateAnalysers(element);
         },
-        getMicPermission() {
-            initAudio().then(() => {
+        async getMicPermission() {
+            await initAudio().then(() => {
                 this.hasGrantedPermission = true;
                 navigator.mediaDevices.enumerateDevices().then((devices) => {
                     // Save a list of input devices to display.
                     this.inputDevices = devices.filter(device => device.kind === "audioinput");
                     // Sets default device to be the initial selected device.
                     const defaultDevice = this.inputDevices.find(device => device.deviceId === "default")
-                    this.config.audioInput = defaultDevice ? "default" : this.inputDevices[0].deviceId;
+                    if (this.config) {
+                        this.config.audioInput = defaultDevice ? "default" : this.inputDevices[0].deviceId;
+                    }
                 }, () => { console.log("Failed to enumerate devices.") });
             }, () => {
                 this.hasGrantedPermission = false;
             });
+            return this.hasGrantedPermission;
         },
         audioInputChanged(newInputId) {
             updateInputSource(newInputId);

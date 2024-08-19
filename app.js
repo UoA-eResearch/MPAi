@@ -10,8 +10,9 @@ import { config } from './store.js';
  * @param {object} from Path to navigate from
  * @returns If check succeeds, returns true, otherwise returns audio permission route.
  */
-function checkAudioPermission(to, from) {
-    if (!config.audioInput) {
+async function checkAudioPermission(to, from) {
+    var hasGrantedPermission = await AudioPermissionPage.methods.getMicPermission()
+    if (!hasGrantedPermission) {
         return { name: 'audiopermission' };
     }
     return true;
