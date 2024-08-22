@@ -1,7 +1,8 @@
 import TopBar from "../components/TopBar.js";
 import TikiMessage from "../components/TikiMessage.js";
 import BottomBar from "../components/BottomBar.js";
-import { initialisePlots, startRecording, stopRecording } from "../audio.js";
+import { initialisePlots, startRecording, stopRecording, uploadAudioBlob } from "../audio.js";
+import { config } from '../store.js'
 
 
 export default {
@@ -58,7 +59,7 @@ export default {
             this.$router.replace("/")
         },
         nextClick() {
-            this.$router.push({ name: "record" });
+            this.$router.push({ name: "taa-record" });
         },
         handleRecordPressed() {
             if (!this.isRecording) {
@@ -78,19 +79,26 @@ export default {
                 startRecording();
             }
         },
-        handleSpaceReleased(event) {
+        async handleSpaceReleased(event) {
             if (event.code === 'Space' && this.isRecording) {
                 this.isRecording = false;
                 stopRecording();
             }
         },
+
         changeDisplayedGraph(graphName) {
             this.graphDisplayed = graphName;
             // Hack to temporarily fix buggy labels.
             initialisePlots(this.$refs.dotplot, this.$refs.timeline);
         }
     },
+    data() {
+        return {
+            config
+        };
+    },
     mounted() {
+
         initialisePlots(this.$refs.dotplot, this.$refs.timeline);
         window.addEventListener('keydown', this.handleSpacePressed);
         window.addEventListener('keyup', this.handleSpaceReleased);

@@ -442,26 +442,6 @@ async function doneEncoding(blob, post = true) {
             }
         })
     })
-    // if (post && password && participant_id) {
-    //     var form = new FormData();
-    //     form.append("file", blob);
-    //     try {
-    //         await fetch(`https://api-proxy.auckland-cer.cloud.edu.au/MPAi_API/?password=${password}&participant_id=${participant_id}`, {
-    //             method: "POST",
-    //             body: form
-    //         }).then(r => r.json()).then(r => {
-    //             console.log(r)
-    //             if (r.status == "success") {
-    //                 $("#upload_status").html('<div class="alert alert-success" role="alert">Recording uploaded successfully</div>')
-    //             } else {
-    //                 $("#upload_status").html(`<div class="alert alert-danger" role="alert">Error uploading recording: ${r.detail}</div>`)
-    //             }
-    //         })
-    //     } catch (e) {
-    //         console.error(e)
-    //         $("#upload_status").html('<div class="alert alert-danger" role="alert">Error uploading recording</div>')
-    //     }
-    // }
 }
 
 
@@ -475,11 +455,42 @@ function gotBuffers(buffers) {
     // the ONLY time gotBuffers is called is right after a new recording is completed -
     // so here's where we should set up the download.
     //audioRecorder.exportWAV(doneEncoding);
-    audioRecorder.exportMonoWAV(doneEncoding);
+    return new Promise(function (resolve, reject) {
+        audioRecorder.exportMonoWAV(function (blob) {
+            resolve(blob);
+            doneEncoding(blob);
+        });
+    });
 }
 
-export function stopRecording() {
-    // function stopRecording() {
+export async function stopRecording() {
+    const sampleRate = audioContext.sampleRate;
     audioRecorder.stop();
-    audioRecorder.getBuffers(gotBuffers);
+    const buffers = await new Promise(function (resolve, reject) {
+        audioRecorder.getBuffers(resolve);
+    });
+    return await gotBuffers(buffers);
+}
+
+export async function uploadAudioBlob(participant_id, password, vowel, blob) {
+    if (blob && password && participant_id && vowel) {
+        var form = new FormData();
+        form.append("file", blob);
+        return fetch(`https://api-proxy.auckland-cer.cloud.edu.au/MPAi_API/?password=${password}&participant_id=${participant_id}_${vowel}`, {
+            method: "POST",
+            body: form
+        }).then(r => r.json()).then(r => {
+            console.log(r);
+            return r;
+            // if (r.status == "success") {
+            //     $("#upload_status").html('<div class="alert alert-success" role="alert">Recording uploaded successfully</div>')
+            // } else {
+            //     $("#upload_status").html(`<div class="alert alert-danger" role="alert">Error uploading recording: ${r.detail}</div>`)
+            // }
+        });
+        // } catch (e) {
+        //     console.error(e)
+        //     $("#upload_status").html('<div class="alert alert-danger" role="alert">Error uploading recording</div>')
+        // }
+    }
 }

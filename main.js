@@ -153,10 +153,10 @@ function initPlot() {
                 showlegend: false
             }
             Plotly.newPlot('plot', traces, layout, {
-               displayModeBar: false,
-               doubleClick: false,
-               staticPlot: true,
-               responsive: true
+                displayModeBar: false,
+                doubleClick: false,
+                staticPlot: true,
+                responsive: true
             })
         }
     });
@@ -183,10 +183,10 @@ $("#plot").mousemove(function (evt) {
     trace.marker.line.width = trace.x.map((x, i) => i == index ? 2 : 0)
     Plotly.react('plot', traces, layout);
 
-    Plotly.Fx.hover('debug_plot',[
-        {curveNumber:0, pointNumber:index},
-        {curveNumber:1, pointNumber:index},
-        {curveNumber:2, pointNumber:index}
+    Plotly.Fx.hover('debug_plot', [
+        { curveNumber: 0, pointNumber: index },
+        { curveNumber: 1, pointNumber: index },
+        { curveNumber: 2, pointNumber: index }
     ]);
 })
 
@@ -210,7 +210,7 @@ $("#plot").click(function (evt) {
     console.log("Clicked", vowel, minDist)
     var speaker = $("#speaker").val()
     var filename = "samples/" + sample_lookup[`${speaker}|${vowel}`]
-    fetch(filename).then(r => r.blob()).then(async function(r) {
+    fetch(filename).then(r => r.blob()).then(async function (r) {
         new Audio(URL.createObjectURL(r)).play()
         await doneEncoding(r, false)
     })
@@ -222,10 +222,10 @@ $("#speaker").change(function () {
 })
 
 $("#vowel").change(function () {
-    var vowel =  $("#vowel").val()
+    var vowel = $("#vowel").val()
     var speaker = $("#speaker").val()
     var filename = "samples/" + sample_lookup[`${speaker}|${vowel}`]
-    fetch(filename).then(r => r.blob()).then(async function(r) {
+    fetch(filename).then(r => r.blob()).then(async function (r) {
         new Audio(URL.createObjectURL(r)).play()
         await doneEncoding(r, false)
     })
@@ -340,15 +340,15 @@ function parse_F0(xassp) {
 }
 
 // Cache WASM
-ksvF0({arguments:["-X"]})
-forest({arguments:["-X"]})
+ksvF0({ arguments: ["-X"] })
+forest({ arguments: ["-X"] })
 
 // https://api-proxy.auckland-cer.cloud.edu.au/MPAi_API/docs#/default/upload__post
 const urlParams = new URLSearchParams(window.location.search);
 const password = urlParams.get('password');
 const participant_id = urlParams.get('participant_id');
 
-async function doneEncoding(blob, post=true) {
+async function doneEncoding(blob, post = true) {
     $("#compare").prop('disabled', false);
     if (post) lastRecording = blob;
 
@@ -359,7 +359,7 @@ async function doneEncoding(blob, post=true) {
     content = new Uint8Array(content)
     var start = performance.now()
 
-    ksvF0({noInitialRun: true}).then(async function(Module) {
+    ksvF0({ noInitialRun: true }).then(async function (Module) {
         Module.FS.writeFile("1.wav", content)
         var args = [
             "1.wav", // input file
@@ -371,8 +371,8 @@ async function doneEncoding(blob, post=true) {
             args.push("-g=m")
         }
         Module.callMain(args)
-        var pitch_results = parse_F0(Module.FS.readFile("1.f0", {encoding: "utf8"}))
-        forest({noInitialRun: true}).then(async function(Module) {
+        var pitch_results = parse_F0(Module.FS.readFile("1.f0", { encoding: "utf8" }))
+        forest({ noInitialRun: true }).then(async function (Module) {
             Module.FS.writeFile("1.wav", content)
             var args = [
                 "1.wav", // input file
@@ -387,7 +387,7 @@ async function doneEncoding(blob, post=true) {
                 args.push("-f")
             }
             Module.callMain(args)
-            var results = parse_FMS(Module.FS.readFile("1.fms", {encoding: "utf8"}))
+            var results = parse_FMS(Module.FS.readFile("1.fms", { encoding: "utf8" }))
             console.log(results)
             for (var i = 0; i < results.length; i++) {
                 results[i]["F0(Hz)"] = pitch_results[i]["F0(Hz)"]
@@ -601,7 +601,7 @@ async function gotStream(stream) {
     if ($("#mic > option").length == 0) {
         for (var device of devices) {
             if (device.kind == "audioinput") {
-                var selected = device.deviceId == "default" ? "selected": "";
+                var selected = device.deviceId == "default" ? "selected" : "";
                 $("#mic").append(`<option value="${device.deviceId}" ${selected}>${device.label}</option>`)
             }
         }
@@ -610,12 +610,14 @@ async function gotStream(stream) {
 
 $("#mic").change(function () {
     console.log(this.value)
-    navigator.mediaDevices.getUserMedia({ audio: {
-        deviceId: {exact: this.value},
-        autoGainControl: true,
-        echoCancellation: true,
-        noiseSuppression: true
-    } }).then(gotStream, onError);
+    navigator.mediaDevices.getUserMedia({
+        audio: {
+            deviceId: { exact: this.value },
+            autoGainControl: true,
+            echoCancellation: true,
+            noiseSuppression: true
+        }
+    }).then(gotStream, onError);
 });
 
 function onError(e) {
@@ -638,12 +640,14 @@ function initAudio() {
     if (!navigator.requestAnimationFrame)
         navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
 
-    const userMediaResult = navigator.mediaDevices.getUserMedia({ audio: {
-        //numChannels: 1,
-        autoGainControl: true,
-        echoCancellation: true,
-        noiseSuppression: true
-    } });
+    const userMediaResult = navigator.mediaDevices.getUserMedia({
+        audio: {
+            //numChannels: 1,
+            autoGainControl: true,
+            echoCancellation: true,
+            noiseSuppression: true
+        }
+    });
     userMediaResult.then(gotStream, onError);
     return userMediaResult
 }

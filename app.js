@@ -1,8 +1,16 @@
 import WelcomePage from './pages/WelcomePage.js';
 import AudioPermissionPage from './pages/AudioPermissionPage.js';
 import PlaygroundPage from './pages/PlaygroundPage.js';
-import RecordPage from './pages/RecordPage.js';
 import { config } from './store.js';
+import TaaRecordPage from './pages/TaaRecordPage.js';
+import HeeRecordPage from './pages/HeeRecordPage.js';
+import HiiRecordPage from './pages/HiiRecordPage.js';
+import PooRecordPage from './pages/PooRecordPage.js';
+import TuuRecordPage from './pages/TuuRecordPage.js';
+import FinishPage from './pages/FinishPage.js';
+
+window.config = config;
+
 
 /**
  * Navigation guard to ensure audio permission is obtained and default audio device is selected.
@@ -11,6 +19,12 @@ import { config } from './store.js';
  * @returns If check succeeds, returns true, otherwise returns audio permission route.
  */
 function checkAudioPermission(to, from) {
+    // if (navigator.permissions) {
+    //     const audioPermStatus = await navigator.permissions.query({name: "microphone"});
+    //     if (audioPermStatus.state == 'granted') {
+
+    //     }
+    // }
     if (!config.audioInput) {
         return { name: 'audiopermission' };
     }
@@ -21,13 +35,27 @@ const appRoutes = [
     { name: 'welcome', path: '/', component: WelcomePage },
     { name: 'audiopermission', path: '/audiopermission', component: AudioPermissionPage },
     { name: 'playground', path: '/playground', component: PlaygroundPage, beforeEnter: checkAudioPermission },
-    { name: 'record', path: '/record', component: RecordPage, beforeEnter: checkAudioPermission }
+    { name: 'taa-record', path: '/taa-record', component: TaaRecordPage, beforeEnter: checkAudioPermission },
+    { name: 'hee-record', path: '/hee-record', component: HeeRecordPage, beforeEnter: checkAudioPermission },
+    { name: 'hii-record', path: '/hii-record', component: HiiRecordPage, beforeEnter: checkAudioPermission },
+    { name: 'poo-record', path: '/poo-record', component: PooRecordPage, beforeEnter: checkAudioPermission },
+    { name: 'tuu-record', path: '/tuu-record', component: TuuRecordPage, beforeEnter: checkAudioPermission },
+    { name: 'finish', path: '/finish', component: FinishPage }
 ];
+
 
 const router = VueRouter.createRouter({
     history: VueRouter.createWebHashHistory(),
     routes: appRoutes
 });
+
+// Grab participant id and password, put into config.
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has("participant_id")) {
+    console.log(`Participant ID ${urlParams.get('participant_id')} and password in URL, saving.`)
+    config.studyParticipantId = urlParams.get('participant_id');
+    config.studyParticipantPassword = urlParams.get('password');
+}
 
 const app = Vue.createApp({});
 app.use(router);
