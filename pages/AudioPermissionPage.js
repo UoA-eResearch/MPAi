@@ -55,8 +55,8 @@ export default {
             }
             updateAnalysers(element);
         },
-        getMicPermission() {
-            initAudio().then(() => {
+        async getMicPermission() {
+            await initAudio().then(() => {
                 this.hasGrantedPermission = true;
                 navigator.mediaDevices.enumerateDevices().then((devices) => {
                     // Save a list of input devices to display.
@@ -68,6 +68,7 @@ export default {
             }, () => {
                 this.hasGrantedPermission = false;
             });
+            return this.hasGrantedPermission;
         },
         audioInputChanged(newInputId) {
             updateInputSource(newInputId);

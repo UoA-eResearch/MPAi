@@ -494,3 +494,15 @@ export async function uploadAudioBlob(participant_id, password, vowel, blob) {
         // }
     }
 }
+
+// export function getMicPermission() {
+//     return initAudio().then(() => {
+//         navigator.mediaDevices.enumerateDevices().then((devices) => {
+//             // Save a list of input devices to display.
+//             return devices.filter(device => device.kind === "audioinput");
+//             // Sets default device to be the initial selected device.
+//             const defaultDevice = inputDevices.find(device => device.deviceId === "default")
+//             return defaultDevice ? "default" : this.inputDevices[0].deviceId;
+//         }, () => { console.log("Failed to enumerate devices.") });
+//     });
+// }

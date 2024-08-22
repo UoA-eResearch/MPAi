@@ -18,7 +18,7 @@ window.config = config;
  * @param {object} from Path to navigate from
  * @returns If check succeeds, returns true, otherwise returns audio permission route.
  */
-function checkAudioPermission(to, from) {
+async function checkAudioPermission(to, from) {
     // if (navigator.permissions) {
     //     const audioPermStatus = await navigator.permissions.query({name: "microphone"});
     //     if (audioPermStatus.state == 'granted') {
