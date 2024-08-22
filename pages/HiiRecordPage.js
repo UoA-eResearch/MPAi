@@ -1,7 +1,7 @@
 import RecordPage from "../components/RecordPage.js";
 
 export default {
-    component: RecordPage,
+    components: { RecordPage },
     template: `
         <RecordPage 
             vowel="i" 

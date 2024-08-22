@@ -11,7 +11,7 @@ export default {
         return {
             config,
             isRecording: false,
-            attemptsRemaining: 5
+            attemptsRemaining: 1
         }
     },
     computed: {
