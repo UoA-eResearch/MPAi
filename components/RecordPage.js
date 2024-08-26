@@ -55,11 +55,11 @@ export default {
                 startRecording();
             }
         },
-        handleRecordReleased() {
+        async handleRecordReleased() {
             if (this.isRecording) {
                 this.isRecording = false;
-                stopRecording();
-                this.canContinue = true;
+                const blob = await stopRecording();
+                this.uploadAudio(blob);
             }
         },
         handleSpacePressed(event) {
