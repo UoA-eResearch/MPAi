@@ -6,7 +6,7 @@ import { startRecording, stopRecording, initialisePlots, uploadAudioBlob } from 
 
 
 export default {
-    props: ['vowel', 'sound', 'sampleFile', 'nextUrl'],
+    props: ['vowel', 'sound', 'nextUrl'],
     data() {
         return {
             config,
@@ -21,7 +21,7 @@ export default {
     },
     components: { TopBar, TikiMessage, BottomBar },
     template: `
-    <TopBar @prev-click="prevClicked()" />
+    <TopBar @prev-click="prevClicked()" :speakerOptionEnabled="true" />
     <div class="flex-fill">
     <TikiMessage>Try pronouncing <a href="#" @click.prevent="playSample();" style="display:inline-block; text-decoration: underline dotted; font-weight:bold;">{{sound}} <i class="bi bi-play"></i></a>.</TikiMessage>
     <div class="d-flex justify-content-center">
@@ -42,6 +42,12 @@ export default {
     </div>
     <BottomBar :isContinueEnabled="canContinue" @continue-click="nextClicked()" />
     `,
+    watch: {
+        "config.modelSpeaker": function () {
+            // Play sound sample if user changes model speaker to demonstrate what it sounds like.
+            this.playSample();
+        }
+    },
     methods: {
         prevClicked() {
             this.$router.replace({ name: "playground" });
@@ -69,21 +75,26 @@ export default {
             }
         },
         async handleSpaceReleased(event) {
-            if (event.code === 'Space' && this.isRecording) {
-                this.isRecording = false;
-                const blob = await stopRecording();
-                this.uploadAudio(blob);
+            if (event.code === 'Space') {
+                await this.handleRecordReleased();
             }
         },
         playSample() {
-            const audio = new Audio("samples/" + this.sampleFile);
+            const samples = this.config.modelSpeaker.samples[this.sound];
+            if (!samples) {
+                console.warn(`No samples found for sound ${this.sound} in currently selected model speaker.`);
+                return;
+            }
+            // Randomly selecte a sample to play back.
+            const idx = Math.round(Math.random() * (samples.length - 1))
+            const audio = new Audio(samples[idx]);
             audio.play();
         },
         async uploadAudio(blob) {
             const participantId = this.config.studyParticipantId;
             const password = this.config.studyParticipantPassword;
             try {
-                await uploadAudioBlob(participantId, password, this.vowel, blob);
+                await uploadAudioBlob(participantId, password, this.sound, blob);
                 this.attemptsRemaining--;
             } catch (e) {
                 console.error("Could not upload to audio server.");
@@ -95,6 +106,8 @@ export default {
         initialisePlots(this.$refs.dotplot, null);
         window.addEventListener('keydown', this.handleSpacePressed);
         window.addEventListener('keyup', this.handleSpaceReleased);
+        // Play the sample on page load.
+        this.playSample();
     },
     unmounted() {
         window.removeEventListener('keydown', this.handleSpacePressed);

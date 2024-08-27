@@ -8,6 +8,7 @@ import HiiRecordPage from './pages/HiiRecordPage.js';
 import PooRecordPage from './pages/PooRecordPage.js';
 import TuuRecordPage from './pages/TuuRecordPage.js';
 import FinishPage from './pages/FinishPage.js';
+import ModelSpeakerPage from './pages/ModelSpeakerPage.js';
 
 window.config = config;
 
@@ -35,6 +36,7 @@ const appRoutes = [
     { name: 'welcome', path: '/', component: WelcomePage },
     { name: 'audiopermission', path: '/audiopermission', component: AudioPermissionPage },
     { name: 'playground', path: '/playground', component: PlaygroundPage, beforeEnter: checkAudioPermission },
+    { name: "model-speaker", path: "/model-speaker", component: ModelSpeakerPage },
     { name: 'taa-record', path: '/taa-record', component: TaaRecordPage, beforeEnter: checkAudioPermission },
     { name: 'hee-record', path: '/hee-record', component: HeeRecordPage, beforeEnter: checkAudioPermission },
     { name: 'hii-record', path: '/hii-record', component: HiiRecordPage, beforeEnter: checkAudioPermission },
@@ -56,6 +58,10 @@ if (urlParams.has("participant_id")) {
     config.studyParticipantId = urlParams.get('participant_id');
     config.studyParticipantPassword = urlParams.get('password');
 }
+
+// Fetch model speakers and select the first one as default.
+config.modelSpeakerOptions = await (await fetch("samples/samples.json")).json();
+config.modelSpeaker = config.modelSpeakerOptions[0];
 
 const app = Vue.createApp({});
 app.use(router);

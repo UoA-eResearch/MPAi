@@ -59,7 +59,7 @@ export default {
             this.$router.replace("/")
         },
         nextClick() {
-            this.$router.push({ name: "taa-record" });
+            this.$router.push({ name: "model-speaker" });
         },
         handleRecordPressed() {
             if (!this.isRecording) {
