@@ -59,6 +59,11 @@ if (urlParams.has("participant_id")) {
     config.studyParticipantId = urlParams.get('participant_id');
     config.studyParticipantPassword = urlParams.get('password');
 }
+if (urlParams.has("attemptsAllowed")) {
+    config.attemptsAllowed = urlParams.get('attemptsAllowed');
+    console.log(`Setting attempts allowed for recording to ${config.attemptsAllowed}`);
+}
+
 
 // Fetch model speakers and select the first one as default.
 resources.modelSpeakerOptions = await (await fetch("samples/samples.json")).json();

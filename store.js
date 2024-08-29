@@ -2,7 +2,8 @@ export const config = Vue.reactive({
   audioInput: null,
   modelSpeaker: null,
   studyParticipantId: null,
-  studyPassword: null
+  studyPassword: null,
+  attemptsAllowed: 10
 });
 
 export const resources = Vue.reactive({

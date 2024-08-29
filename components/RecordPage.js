@@ -12,7 +12,7 @@ export default {
             config,
             resources,
             isRecording: false,
-            attemptsRemaining: 1
+            attemptsRemaining: 10
         }
     },
     computed: {
@@ -113,6 +113,8 @@ export default {
         }
     },
     mounted() {
+        // Initiatlise attempts with configured attempts.
+        this.attemptsRemaining = this.config.attemptsAllowed;
         this.initialiseGraph();
         window.addEventListener('keydown', this.handleSpacePressed);
         window.addEventListener('keyup', this.handleSpaceReleased);
