@@ -5,6 +5,7 @@ export default {
     template: `
         <RecordPage 
             sound="hē" 
+            vowel="e"
             :nextUrl="{name: 'hii-record'}" 
         />
     `

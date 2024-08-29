@@ -1,8 +1,8 @@
 import TopBar from "../components/TopBar.js";
 import TikiMessage from "../components/TikiMessage.js";
 import BottomBar from "../components/BottomBar.js";
-import { config } from "../store.js";
-import { startRecording, stopRecording, initialisePlots, uploadAudioBlob } from '../audio.js';
+import { config, resources } from "../store.js";
+import { startRecording, stopRecording, initScatterplot, uploadAudioBlob, updateFormantEllipses } from '../audio.js';
 
 
 export default {
@@ -10,6 +10,7 @@ export default {
     data() {
         return {
             config,
+            resources,
             isRecording: false,
             attemptsRemaining: 1
         }
@@ -46,6 +47,8 @@ export default {
         "config.modelSpeaker": function () {
             // Play sound sample if user changes model speaker to demonstrate what it sounds like.
             this.playSample();
+            // Reinitialise the graph to show different formant.
+            this.initialiseGraph();
         }
     },
     methods: {
@@ -100,10 +103,17 @@ export default {
                 console.error("Could not upload to audio server.");
                 console.error(e);
             }
+        },
+        initialiseGraph() {
+            const allFormants = this.resources.speakerFormants;
+            const gender = this.config.modelSpeaker.gender;
+            const formants = allFormants.filter(r => r.length == "long" && r.speaker == gender);
+            initScatterplot(this.$refs.dotplot);
+            updateFormantEllipses(this.$refs.dotplot, formants, this.vowel);
         }
     },
     mounted() {
-        initialisePlots(this.$refs.dotplot, null);
+        this.initialiseGraph();
         window.addEventListener('keydown', this.handleSpacePressed);
         window.addEventListener('keyup', this.handleSpaceReleased);
         // Play the sample on page load.

@@ -1,13 +1,14 @@
 import TopBar from "../components/TopBar.js";
 import BottomBar from "../components/BottomBar.js";
 import TikiMessage from "../components/TikiMessage.js";
-import { config } from "../store.js";
+import { config, resources } from "../store.js";
 
 export default {
     components: { TopBar, BottomBar, TikiMessage },
     data() {
         return {
-            config
+            config,
+            resources
         };
     },
     template: `
@@ -18,7 +19,7 @@ export default {
         </TikiMessage>
         <p class="text-center">Choose the speaker that is closest to your voice.</p>
         <ul class="list-group">
-            <li class="list-group-item" v-for="speaker in config.modelSpeakerOptions">
+            <li class="list-group-item" v-for="speaker in resources.modelSpeakerOptions">
                 <input class="form-check-input me-1" type="radio" @change="speakerChanged(speaker.name)" :checked="speaker.name == config.modelSpeaker.name" :value="speaker.name" :id="'speaker-' + speaker.name">
                 <label class="form-check-label stretched-link" :for="'speaker-' + speaker.name">{{speaker.displayName}}</label>
             </li>
@@ -28,7 +29,7 @@ export default {
     `,
     methods: {
         speakerChanged(name) {
-            const speakers = this.config.modelSpeakerOptions;
+            const speakers = this.resources.modelSpeakerOptions;
             this.config.modelSpeaker = speakers.find(speaker => speaker.name === name);
         },
         nextClicked() {

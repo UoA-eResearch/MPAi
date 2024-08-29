@@ -24,154 +24,167 @@ function hzToBark(freqHz) {
     return bark
 }
 
-export function initialisePlots(scatterElement, timelineEl) {
-    // function initialisePlots(scatterElement, timelineEl) {
-    initScatterplot(scatterElement);
-    scatterplotElement = scatterElement;
+export function initialiseTimeline(timelineEl) {
     timelineElement = timelineEl;
-    if (timelineEl) {
-        Plotly.newPlot(timelineEl, [], {
-            xaxis: {
-                title: "Time (s)"
-            },
-            yaxis: {
-                title: "Bark scale frequency"
-            },
-            hovermode: "x"
-        });
-    }
+    Plotly.newPlot(timelineEl, [], {
+        xaxis: {
+            title: "Time (s)"
+        },
+        yaxis: {
+            title: "Bark scale frequency"
+        },
+        hovermode: "x"
+    });
+
 }
 
 export function initScatterplot(plotElement) {
-    // function initScatterplot(plotElement) {
-    Papa.parse("kaumatua_monoVowel_formantData.csv", {
-        header: true,
-        download: true,
-        dynamicTyping: true,
-        skipEmptyLines: true,
-        complete: function (results) {
-            results = results.data.filter(r => r.length == "long" && r.speaker == speaker.toLowerCase())
-            console.log(results)
-            traces = [{
-                x: results.map(r => hzToBark(r["F2_mean"])),
-                y: results.map(r => hzToBark(r["F1_mean"])),
-                autocolorscale: true,
-                text: results.map(r => r.vowel),
-                //textposition: 'top',
-                textfont: {
-                    size: 20
-                },
-                mode: 'text',
-                type: 'scatter',
-                hoverinfo: "none"
-            }];
-            const shapes = []
-            for (var r of results) {
-                var step = .05;
-                for (var i = 0; i <= 1; i += step) {
-                    shapes.push({
-                        type: "circle",
-                        xref: "x",
-                        yref: "y",
-                        x0: hzToBark(r["F2_mean"] - r["F2_sd"] * i),
-                        y0: hzToBark(r["F1_mean"] - r["F1_sd"] * i),
-                        x1: hzToBark(r["F2_mean"] + r["F2_sd"] * i),
-                        y1: hzToBark(r["F1_mean"] + r["F1_sd"] * i),
-                        opacity: step / 2,
-                        fillcolor: 'red',
-                        line: {
-                            width: 0
-                        }
-                    })
-                }
+    scatterplotElement = plotElement;
+
+    layout = {
+        annotations: [
+            {
+                xref: 'paper',
+                yref: 'paper',
+                x: 0,
+                xanchor: 'right',
+                y: 1,
+                yanchor: 'bottom',
+                text: 'Closed',
+                showarrow: false
+            },
+            {
+                xref: 'paper',
+                yref: 'paper',
+                x: 0,
+                xanchor: 'right',
+                y: 0,
+                yanchor: 'bottom',
+                text: 'Open',
+                showarrow: false
+            },
+            {
+                xref: 'paper',
+                yref: 'paper',
+                x: 0,
+                xanchor: 'left',
+                y: 0,
+                yanchor: 'top',
+                text: 'Front',
+                showarrow: false
+            },
+            {
+                xref: 'paper',
+                yref: 'paper',
+                x: 1,
+                xanchor: 'left',
+                y: 0,
+                yanchor: 'top',
+                text: 'Back',
+                showarrow: false
             }
-            layout = {
-                shapes: shapes,
-                annotations: [
-                    {
-                        xref: 'paper',
-                        yref: 'paper',
-                        x: 0,
-                        xanchor: 'right',
-                        y: 1,
-                        yanchor: 'bottom',
-                        text: 'Closed',
-                        showarrow: false
-                    },
-                    {
-                        xref: 'paper',
-                        yref: 'paper',
-                        x: 0,
-                        xanchor: 'right',
-                        y: 0,
-                        yanchor: 'bottom',
-                        text: 'Open',
-                        showarrow: false
-                    },
-                    {
-                        xref: 'paper',
-                        yref: 'paper',
-                        x: 0,
-                        xanchor: 'left',
-                        y: 0,
-                        yanchor: 'top',
-                        text: 'Front',
-                        showarrow: false
-                    },
-                    {
-                        xref: 'paper',
-                        yref: 'paper',
-                        x: 1,
-                        xanchor: 'left',
-                        y: 0,
-                        yanchor: 'top',
-                        text: 'Back',
-                        showarrow: false
-                    }
-                ],
-                dragmode: false,
-                hoverinfo: "none",
-                hovermode: "x",
-                clickmode: "event",
-                xaxis: {
-                    showticklabels: false,
-                    showgrid: false,
-                    zeroline: false,
-                    //visible: false,
-                    // female: xmax = 16.5, xmin = 6.5, ymax = 8, ymin = 3
-                    // male: xmax = 15.5    xmin = 5.5    ymax = 7.5    ymin = 2.5
-                    range: [16.5, 5.5],
-                    //title: "F2 (Bark)"
-                    title: "Tongue Position (F2)"
-                },
-                yaxis: {
-                    showticklabels: false,
-                    showgrid: false,
-                    zeroline: false,
-                    //visible: false,
-                    range: [9, 2],
-                    //title: "F1 (Bark)",
-                    title: "Mouth Openness (F1)"
-                },
-                /*
-                margin: {
-                    l: 0,
-                    r: 0,
-                    b: 0,
-                    t: 0,
-                },
-                */
-                showlegend: false
+        ],
+        dragmode: false,
+        hoverinfo: "none",
+        hovermode: "x",
+        clickmode: "event",
+        xaxis: {
+            showticklabels: false,
+            showgrid: false,
+            zeroline: false,
+            //visible: false,
+            // female: xmax = 16.5, xmin = 6.5, ymax = 8, ymin = 3
+            // male: xmax = 15.5    xmin = 5.5    ymax = 7.5    ymin = 2.5
+            range: [16.5, 5.5],
+            //title: "F2 (Bark)"
+            title: "Tongue Position (F2)"
+        },
+        yaxis: {
+            showticklabels: false,
+            showgrid: false,
+            zeroline: false,
+            //visible: false,
+            range: [9, 2],
+            //title: "F1 (Bark)",
+            title: "Mouth Openness (F1)"
+        },
+        /*
+        margin: {
+            l: 0,
+            r: 0,
+            b: 0,
+            t: 0,
+        },
+        */
+        showlegend: false
+    }
+    Plotly.newPlot(plotElement, null, layout, {
+        displayModeBar: false,
+        doubleClick: false,
+        staticPlot: true,
+        responsive: true
+    })
+}
+
+export function updateFormantEllipses(plotElement, formants, highlightedVowel) {
+    const shapes = formants.flatMap(
+        f => createFormantShape(f, highlightedVowel ? f.vowel == highlightedVowel : false)
+    );
+    traces = [{
+        x: formants.map(r => hzToBark(r["F2_mean"])),
+        y: formants.map(r => hzToBark(r["F1_mean"])),
+        autocolorscale: true,
+        text: formants.map(r => r.vowel),
+        //textposition: 'top',
+        textfont: {
+            size: 20
+        },
+        mode: 'text',
+        type: 'scatter',
+        hoverinfo: "none"
+    }];
+    // layout.shapes = shapes;
+
+    Plotly.react(plotElement, traces, { ...layout, shapes });
+
+}
+
+export function fetchKaumatuaFormants() {
+    return new Promise(function (resolve, reject) {
+        Papa.parse("kaumatua_monoVowel_formantData.csv", {
+            header: true,
+            download: true,
+            dynamicTyping: true,
+            skipEmptyLines: true,
+            complete: function (results) {
+                resolve(results.data);
             }
-            Plotly.newPlot(plotElement, traces, layout, {
-                displayModeBar: false,
-                doubleClick: false,
-                staticPlot: true,
-                responsive: true
-            })
-        }
+        });
     });
 }
+
+function createFormantShape(formant, isHighlighted) {
+    const shapes = [];
+    const step = .05;
+    for (var i = 0; i <= 1; i += step) {
+        shapes.push({
+            type: "circle",
+            xref: "x",
+            yref: "y",
+            x0: hzToBark(formant["F2_mean"] - formant["F2_sd"] * i),
+            y0: hzToBark(formant["F1_mean"] - formant["F1_sd"] * i),
+            x1: hzToBark(formant["F2_mean"] + formant["F2_sd"] * i),
+            y1: hzToBark(formant["F1_mean"] + formant["F1_sd"] * i),
+            opacity: step / 2,
+            fillcolor: isHighlighted ? 'red' : 'lightgray',
+            line: {
+                width: 0
+            }
+        })
+    }
+    return shapes;
+}
+
 
 export function updateAnalysers(analyserElement) {
     // function updateAnalysers(analyserElement) {

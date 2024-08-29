@@ -1,16 +1,17 @@
-import { config } from "../store.js";
+import { config, resources } from "../store.js";
 
 export default {
   props: ['speakerOptionEnabled'],
   data() {
     return {
       speakers: [],
-      config
+      config,
+      resources
     }
   },
   methods: {
     speakerChanged(name) {
-      const speakers = this.config.modelSpeakerOptions;
+      const speakers = this.resources.modelSpeakerOptions;
       this.config.modelSpeaker = speakers.find(speaker => speaker.name === name);
     }
   },
@@ -26,7 +27,7 @@ export default {
         Speaker: {{config.modelSpeaker.displayName}}
       </button>
       <ul class="dropdown-menu" role="menu">
-        <li role="menuitemradio" v-for="speaker in config.modelSpeakerOptions" class="dropdown-item" @click="speakerChanged(speaker.name)">
+        <li role="menuitemradio" v-for="speaker in resources.modelSpeakerOptions" class="dropdown-item" @click="speakerChanged(speaker.name)">
         <input class="form-check-input me-1" type="radio" :checked="speaker.name == config.modelSpeaker.name" :value="speaker.name" :id="'speaker-' + speaker.name">
         <label class="form-check-label" :for="'speaker-' + speaker.name">{{speaker.displayName}}</label>
         </li>

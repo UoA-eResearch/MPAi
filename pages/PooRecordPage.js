@@ -5,6 +5,7 @@ export default {
     template: `
         <RecordPage 
             sound="pō" 
+            vowel="o"
             :nextUrl="{name: 'tuu-record'}" 
         />
     `

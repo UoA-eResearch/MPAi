@@ -1,7 +1,8 @@
 import WelcomePage from './pages/WelcomePage.js';
 import AudioPermissionPage from './pages/AudioPermissionPage.js';
 import PlaygroundPage from './pages/PlaygroundPage.js';
-import { config } from './store.js';
+import { config, resources } from './store.js';
+import { fetchKaumatuaFormants } from './audio.js'
 import TaaRecordPage from './pages/TaaRecordPage.js';
 import HeeRecordPage from './pages/HeeRecordPage.js';
 import HiiRecordPage from './pages/HiiRecordPage.js';
@@ -60,8 +61,10 @@ if (urlParams.has("participant_id")) {
 }
 
 // Fetch model speakers and select the first one as default.
-config.modelSpeakerOptions = await (await fetch("samples/samples.json")).json();
-config.modelSpeaker = config.modelSpeakerOptions[0];
+resources.modelSpeakerOptions = await (await fetch("samples/samples.json")).json();
+resources.speakerFormants = await fetchKaumatuaFormants();
+// Set model speaker to default to first in options.
+config.modelSpeaker = resources.modelSpeakerOptions[0];
 
 const app = Vue.createApp({});
 app.use(router);

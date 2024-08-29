@@ -1,13 +1,15 @@
 import TopBar from "../components/TopBar.js";
 import TikiMessage from "../components/TikiMessage.js";
 import BottomBar from "../components/BottomBar.js";
-import { initialisePlots, startRecording, stopRecording, uploadAudioBlob } from "../audio.js";
-import { config } from '../store.js'
+import { initialiseTimeline, initScatterplot, startRecording, stopRecording, uploadAudioBlob } from "../audio.js";
+import { config, resources } from '../store.js'
 
 
 export default {
     data() {
         return {
+            config,
+            resources,
             graphDisplayed: "dotplot",
             isRecording: false
         }
@@ -89,17 +91,16 @@ export default {
         changeDisplayedGraph(graphName) {
             this.graphDisplayed = graphName;
             // Hack to temporarily fix buggy labels.
-            initialisePlots(this.$refs.dotplot, this.$refs.timeline);
+            initScatterplot(this.$refs.dotplot);
+            initialiseTimeline(this.$refs.timeline)
         }
     },
-    data() {
-        return {
-            config
-        };
-    },
     mounted() {
-
-        initialisePlots(this.$refs.dotplot, this.$refs.timeline);
+        const allFormants = this.resources.speakerFormants;
+        const gender = this.config.modelSpeaker.gender;
+        const formants = allFormants.filter(r => r.length == "long" && r.speaker == gender);
+        initScatterplot(this.$refs.dotplot, formants);
+        initialiseTimeline(this.$refs.timeline);
         window.addEventListener('keydown', this.handleSpacePressed);
         window.addEventListener('keyup', this.handleSpaceReleased);
     },
