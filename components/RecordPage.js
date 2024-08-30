@@ -2,7 +2,7 @@ import TopBar from "../components/TopBar.js";
 import TikiMessage from "../components/TikiMessage.js";
 import BottomBar from "../components/BottomBar.js";
 import { config, resources } from "../store.js";
-import { startRecording, stopRecording, initScatterplot, uploadAudioBlob, updateFormantEllipses } from '../audio.js';
+import { startRecording, stopRecording, initScatterplot, uploadAudioBlob, updateFormantEllipses, updateAnnotations } from '../audio.js';
 
 
 export default {
@@ -110,6 +110,7 @@ export default {
             const formants = allFormants.filter(r => r.length == "long" && r.speaker == gender);
             initScatterplot(this.$refs.dotplot);
             updateFormantEllipses(this.$refs.dotplot, formants, this.vowel);
+            updateAnnotations(this.$refs.dotplot, this.config.language);
         }
     },
     mounted() {

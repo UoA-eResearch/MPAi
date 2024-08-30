@@ -1,7 +1,7 @@
 import TopBar from "../components/TopBar.js";
 import TikiMessage from "../components/TikiMessage.js";
 import BottomBar from "../components/BottomBar.js";
-import { initialiseTimeline, initScatterplot, startRecording, stopRecording, uploadAudioBlob } from "../audio.js";
+import { initialiseTimeline, initScatterplot, startRecording, stopRecording, updateAnnotations, uploadAudioBlob } from "../audio.js";
 import { config, resources } from '../store.js'
 
 
@@ -100,6 +100,8 @@ export default {
         const gender = this.config.modelSpeaker.gender;
         const formants = allFormants.filter(r => r.length == "long" && r.speaker == gender);
         initScatterplot(this.$refs.dotplot, formants);
+        // updateFormantEllipses(this.$refs.dotplot, formants, this.vowel);
+        updateAnnotations(this.$refs.dotplot, this.config.language);
         initialiseTimeline(this.$refs.timeline);
         window.addEventListener('keydown', this.handleSpacePressed);
         window.addEventListener('keyup', this.handleSpaceReleased);

@@ -2,6 +2,13 @@
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
+/**
+ * @typedef {Object} FormantScatterplot This defines a 
+ * @property {string} element
+ * @property {object[]} traces
+ * @property {object} layout 
+ */
+
 var audioContext = null;//new AudioContext();
 var audioInput = null,
     realAudioInput = null,
@@ -27,6 +34,7 @@ function hzToBark(freqHz) {
 export function initialiseTimeline(timelineEl) {
     timelineElement = timelineEl;
     Plotly.newPlot(timelineEl, [], {
+        plot_bgcolor: '#faffee',
         xaxis: {
             title: "Time (s)"
         },
@@ -42,6 +50,7 @@ export function initScatterplot(plotElement) {
     scatterplotElement = plotElement;
 
     layout = {
+        plot_bgcolor: '#faffee',
         annotations: [
             {
                 xref: 'paper',
@@ -126,6 +135,56 @@ export function initScatterplot(plotElement) {
     })
 }
 
+export function updateAnnotations(plotElement, lang) {
+    const annotations = [
+        {
+            xref: 'paper',
+            yref: 'paper',
+            x: 0,
+            xanchor: 'right',
+            y: 1,
+            yanchor: 'bottom',
+            text: lang === 'en' ? 'Closed' : 'Kati',
+            showarrow: false
+        },
+        {
+            xref: 'paper',
+            yref: 'paper',
+            x: 0,
+            xanchor: 'right',
+            y: 0,
+            yanchor: 'bottom',
+            text: lang === 'en' ? 'Open' : 'Tuwhera',
+            showarrow: false
+        },
+        {
+            xref: 'paper',
+            yref: 'paper',
+            x: 0,
+            xanchor: 'left',
+            y: 0,
+            yanchor: 'top',
+            text: lang === 'en' ? 'Front' : 'Mua',
+            showarrow: false
+        },
+        {
+            xref: 'paper',
+            yref: 'paper',
+            x: 1,
+            xanchor: 'left',
+            y: 0,
+            yanchor: 'top',
+            text: lang === 'en' ? 'Back' : 'Muri',
+            showarrow: false
+        }
+    ];
+    layout.annotations = annotations;
+    layout.xaxis.title = lang === 'en' ? "Tongue Position (F2)" : "Takoto o te arero (F2)";
+    layout.yaxis.title = lang === 'en' ? "Mouth Openness (F1)" : "Tuwhera o te waha (F1)";
+    Plotly.relayout(plotElement, layout);
+
+}
+
 export function updateFormantEllipses(plotElement, formants, highlightedVowel) {
     const shapes = formants.flatMap(
         f => createFormantShape(f, highlightedVowel ? f.vowel == highlightedVowel : false)
@@ -143,9 +202,9 @@ export function updateFormantEllipses(plotElement, formants, highlightedVowel) {
         type: 'scatter',
         hoverinfo: "none"
     }];
-    // layout.shapes = shapes;
+    layout.shapes = shapes;
 
-    Plotly.react(plotElement, traces, { ...layout, shapes });
+    Plotly.react(plotElement, traces, layout);
 
 }
 
@@ -440,7 +499,8 @@ async function doneEncoding(blob, post = true) {
                 yaxis: {
                     title: "Bark scale frequency"
                 },
-                hovermode: "x"
+                hovermode: "x",
+                plot_bgcolor: '#faffee'
             }
             if (timelineElement) {
                 Plotly.newPlot(timelineElement, debug_traces, debug_layout)//, {staticPlot: true});

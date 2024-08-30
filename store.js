@@ -3,7 +3,8 @@ export const config = Vue.reactive({
   modelSpeaker: null,
   studyParticipantId: null,
   studyPassword: null,
-  attemptsAllowed: 10
+  attemptsAllowed: 10,
+  language: 'en' // en or mi
 });
 
 export const resources = Vue.reactive({

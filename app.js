@@ -10,6 +10,7 @@ import PooRecordPage from './pages/PooRecordPage.js';
 import TuuRecordPage from './pages/TuuRecordPage.js';
 import FinishPage from './pages/FinishPage.js';
 import ModelSpeakerPage from './pages/ModelSpeakerPage.js';
+import translate from './translate.js';
 
 window.config = config;
 
@@ -73,4 +74,5 @@ config.modelSpeaker = resources.modelSpeakerOptions[0];
 
 const app = Vue.createApp({});
 app.use(router);
+app.use(translate);
 app.mount("#doc");

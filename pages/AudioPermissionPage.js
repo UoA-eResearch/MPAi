@@ -10,8 +10,8 @@ export default {
         <TopBar @prev-click="prevClicked()" />
         <div class="flex-fill">
             <TikiMessage>
-                <template v-if="!hasGrantedPermission">Before we go on, I need to be able to hear you!</template>
-                <template v-if="hasGrantedPermission">Ka pai! Try saying something.</template>
+                <template v-if="!hasGrantedPermission">Before we go on, I need to be able to hear you.</template>
+                <template v-if="hasGrantedPermission">Ka pai. Try saying something.</template>
             </TikiMessage>
             <p class="text-center" v-if="!hasGrantedPermission">Your microphone is used to listen to your pronunciation so analysis and comparison can happen. Your voice is processed on your device and no data is collected. If you are participating in one of our research studies, you can choose to record and send audio samples.</p>
             <p class="text-center" v-if="hasGrantedPermission">If nothing is showing on the monitor when you say something, try changing the microphone below.</p>
