@@ -25,6 +25,27 @@ var traces = [];
 var layout = {};
 var scatterplotElement;
 var timelineElement;
+const timelineLayout = {
+    dragmode: false,
+    xaxis: {
+        title: "Time (s)",
+        minallowed: 0
+    },
+    yaxis: {
+        showgrid: false,
+        title: "Bark scale frequency",
+        range: [1, 24]
+    },
+    height: 200,
+    hovermode: "x",
+    plot_bgcolor: '#faffee',
+    margin: {
+        l: 50,
+        r: 50,
+        b: 50,
+        t: 50,
+    },
+}
 
 function hzToBark(freqHz) {
     var bark = 26.81 / (1 + (1960 / freqHz)) - 0.53 //#((26.81 * freqHz)/(1960 + freqHz)) - 0.53 #using Traunmüller1990
@@ -33,15 +54,11 @@ function hzToBark(freqHz) {
 
 export function initialiseTimeline(timelineEl) {
     timelineElement = timelineEl;
-    Plotly.newPlot(timelineEl, [], {
-        plot_bgcolor: '#faffee',
-        xaxis: {
-            title: "Time (s)"
-        },
-        yaxis: {
-            title: "Bark scale frequency"
-        },
-        hovermode: "x"
+    Plotly.newPlot(timelineEl, [], timelineLayout, {
+        displayModeBar: false,
+        doubleClick: false,
+        staticPlot: true,
+        responsive: true
     });
 
 }
@@ -98,8 +115,8 @@ export function initScatterplot(plotElement) {
         hovermode: "x",
         clickmode: "event",
         xaxis: {
-            showticklabels: false,
-            showgrid: false,
+            // showticklabels: false,
+            // showgrid: false,
             zeroline: false,
             //visible: false,
             // female: xmax = 16.5, xmin = 6.5, ymax = 8, ymin = 3
@@ -109,22 +126,21 @@ export function initScatterplot(plotElement) {
             title: "Tongue Position (F2)"
         },
         yaxis: {
-            showticklabels: false,
-            showgrid: false,
+            // showticklabels: false,
+            // showgrid: false,
             zeroline: false,
             //visible: false,
             range: [9, 2],
             //title: "F1 (Bark)",
             title: "Mouth Openness (F1)"
         },
-        /*
+        // height: 600,
         margin: {
-            l: 0,
-            r: 0,
-            b: 0,
-            t: 0,
+            l: 50,
+            r: 50,
+            b: 50,
+            t: 50,
         },
-        */
         showlegend: false
     }
     Plotly.newPlot(plotElement, null, layout, {
@@ -492,18 +508,8 @@ async function doneEncoding(blob, post = true) {
                     name: k.replace("(Hz)", "(Bark)")
                 })
             }
-            var debug_layout = {
-                xaxis: {
-                    title: "Time (s)"
-                },
-                yaxis: {
-                    title: "Bark scale frequency"
-                },
-                hovermode: "x",
-                plot_bgcolor: '#faffee'
-            }
             if (timelineElement) {
-                Plotly.newPlot(timelineElement, debug_traces, debug_layout)//, {staticPlot: true});
+                Plotly.react(timelineElement, debug_traces, timelineLayout);//, {staticPlot: true});
                 timelineElement.addEventListener("plotly_hover", function (data) {
                     console.log(data);
                     var points = data.points

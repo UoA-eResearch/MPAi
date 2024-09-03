@@ -39,9 +39,9 @@ export default {
         >Timeline</a>
         </li>
     </ul>
-    <div class="d-flex">
-        <div id="plot" class="d-lg-block" :class="{'d-none': graphDisplayed === 'timeline'}" ref="dotplot" style="width:100%;"></div>
-        <div id="debug_plot" class="d-lg-block" :class="{'d-none': graphDisplayed === 'dotplot'}" ref="timeline"></div>
+    <div class="d-lg-flex flex-column">
+        <div id="plot" class="d-lg-block js-plotly-plot" :class="{'d-none': graphDisplayed === 'timeline'}" ref="dotplot"></div>
+        <div id="debug_plot" class="d-lg-block js-plotly-plot" :class="{'d-none': graphDisplayed === 'dotplot'}" ref="timeline"></div>
     </div>
     <div class="text-center">
         <button 
@@ -90,16 +90,17 @@ export default {
 
         changeDisplayedGraph(graphName) {
             this.graphDisplayed = graphName;
-            // Hack to temporarily fix buggy labels.
-            initScatterplot(this.$refs.dotplot);
-            initialiseTimeline(this.$refs.timeline)
+            // Trigger plotly's responsive handler to resize graphs to fit.
+            this.$nextTick(function () {
+                window.dispatchEvent(new Event('resize'));
+            });
         }
     },
     mounted() {
         const allFormants = this.resources.speakerFormants;
         const gender = this.config.modelSpeaker.gender;
         const formants = allFormants.filter(r => r.length == "long" && r.speaker == gender);
-        initScatterplot(this.$refs.dotplot, formants);
+        initScatterplot(this.$refs.dotplot);
         // updateFormantEllipses(this.$refs.dotplot, formants, this.vowel);
         updateAnnotations(this.$refs.dotplot, this.config.language);
         initialiseTimeline(this.$refs.timeline);
