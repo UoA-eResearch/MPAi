@@ -14,6 +14,7 @@ export default {
       const speakers = this.resources.modelSpeakerOptions;
       this.config.modelSpeaker = speakers.find(speaker => speaker.name === name);
     }
+
   },
   template: `
     <div class="d-flex justify-content-between py-3">
@@ -30,6 +31,16 @@ export default {
         <li role="menuitemradio" v-for="speaker in resources.modelSpeakerOptions" class="dropdown-item" @click="speakerChanged(speaker.name)">
         <input class="form-check-input me-1" type="radio" :checked="speaker.name == config.modelSpeaker.name" :value="speaker.name" :id="'speaker-' + speaker.name">
         <label class="form-check-label" :for="'speaker-' + speaker.name">{{speaker.displayName}}</label>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li role="menuitemcheckbox" class="w-100 dropdown-item" @click="config.echo = !config.echo">
+          <div class="d-flex">
+          <input class="form-check-input me-1" type="checkbox" :checked="config.echo" id="echo-option-checkbox">
+            <div>
+            <label class="form-check-label" for="echo-option-checkbox">Echo</label>
+            <p class="fw-light">Play back your pronunciation.</p>
+            </div>
+          </div>
         </li>
       </ul>
     </div>

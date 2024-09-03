@@ -4,9 +4,18 @@
 	#doc {
 		height: 900px;
 	}
+}
+
+@media (min-width: 992px) {
 
 	#debug_plot {
 		height: 200px;
+	}
+}
+
+@media (max-width: 992px) {
+	#debug_plot {
+		height: 400px;
 	}
 }
 
@@ -15,10 +24,6 @@
 	/*Mobile view.*/
 	#doc {
 		height: 100vh;
-	}
-
-	#debug_plot {
-		height: 400px;
 	}
 }
 

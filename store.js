@@ -4,6 +4,7 @@ export const config = Vue.reactive({
   studyParticipantId: null,
   studyPassword: null,
   attemptsAllowed: 10,
+  echo: true,
   language: 'en' // en or mi
 });
 

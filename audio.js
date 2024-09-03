@@ -19,7 +19,7 @@ var analyserContext = null;
 var analyserNode = null;
 var canvasWidth, canvasHeight;
 var recIndex = 0;
-var speaker = "Female";
+var speaker = "female";
 var lastRecording;
 var traces = [];
 var layout = {};
@@ -61,6 +61,14 @@ export function initialiseTimeline(timelineEl) {
         responsive: true
     });
 
+}
+
+export function setSpeakerGender(val) {
+    speaker = val;
+}
+
+export function getLastRecording() {
+    return new Audio(URL.createObjectURL(lastRecording));
 }
 
 export function initScatterplot(plotElement) {
@@ -115,7 +123,7 @@ export function initScatterplot(plotElement) {
         hovermode: "x",
         clickmode: "event",
         xaxis: {
-            // showticklabels: false,
+            showticklabels: false,
             // showgrid: false,
             zeroline: false,
             //visible: false,
@@ -126,7 +134,7 @@ export function initScatterplot(plotElement) {
             title: "Tongue Position (F2)"
         },
         yaxis: {
-            // showticklabels: false,
+            showticklabels: false,
             // showgrid: false,
             zeroline: false,
             //visible: false,
@@ -442,7 +450,7 @@ async function doneEncoding(blob, post = true) {
             "1.wav", // input file
             "-oA", // output in XASSP ASCII format
         ]
-        if (speaker == "Female") {
+        if (speaker == "female") {
             args.push("-g=f")
         } else {
             args.push("-g=m")
@@ -460,7 +468,7 @@ async function doneEncoding(blob, post = true) {
                 //"-s=10", // set analysis window shift to <dur> ms (default: 5.0)
                 //"-t=70" //  set silence threshold (no analysis) to <num> dB (default: 0.0 dB)
             ]
-            if (speaker == "Female") {
+            if (speaker == "female") {
                 args.push("-f")
             }
             Module.callMain(args)

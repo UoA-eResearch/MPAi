@@ -2,7 +2,7 @@ import TopBar from "../components/TopBar.js";
 import TikiMessage from "../components/TikiMessage.js";
 import BottomBar from "../components/BottomBar.js";
 import { config, resources } from "../store.js";
-import { startRecording, stopRecording, initScatterplot, uploadAudioBlob, updateFormantEllipses, updateAnnotations } from '../audio.js';
+import { startRecording, stopRecording, initScatterplot, uploadAudioBlob, updateFormantEllipses, updateAnnotations, getLastRecording, setSpeakerGender } from '../audio.js';
 
 
 export default {
@@ -26,7 +26,7 @@ export default {
     <div class="flex-fill">
     <TikiMessage>Try pronouncing <a href="#" @click.prevent="playSample();" style="display:inline-block; text-decoration: underline dotted; font-weight:bold;">{{sound}} <i class="bi bi-play"></i></a>.</TikiMessage>
     <div class="d-flex justify-content-center">
-        <div id="plot" class="d-block w-75" ref="dotplot" style="width:100%; height: 400px;"></div>
+        <div id="plot" class="d-block" ref="dotplot" style="width:100%; height: 400px;"></div>
     </div>
     <div class="text-center my-3">
         <button 
@@ -93,6 +93,13 @@ export default {
             const audio = new Audio(samples[idx]);
             audio.play();
         },
+        echo() {
+            const lastRecording = getLastRecording();
+            lastRecording.addEventListener("ended", () => {
+                setTimeout(this.playSample, 500);
+            });
+            lastRecording.play();
+        },
         async uploadAudio(blob) {
             const participantId = this.config.studyParticipantId;
             const password = this.config.studyParticipantPassword;
@@ -103,6 +110,9 @@ export default {
                 console.error("Could not upload to audio server.");
                 console.error(e);
             }
+            if (this.config.echo) {
+                setTimeout(this.echo, 500);
+            }
         },
         initialiseGraph() {
             const allFormants = this.resources.speakerFormants;
@@ -111,6 +121,7 @@ export default {
             initScatterplot(this.$refs.dotplot);
             updateFormantEllipses(this.$refs.dotplot, formants, this.vowel);
             updateAnnotations(this.$refs.dotplot, this.config.language);
+            setSpeakerGender(gender);
         }
     },
     mounted() {
