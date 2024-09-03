@@ -20,7 +20,7 @@ export default {
     <div class="flex-fill">
     <TikiMessage>Try record yourself pronouncing a vowel.</TikiMessage>
     <p class="text-center">Experiment with different vowels, and look at both views. What do you notice? When you're done, tap Continue.</p>
-    <ul class="nav nav-pills nav-fill d-lg-none">
+    <ul class="nav nav-pills nav-fill d-lg-none mb-3">
         <li class="nav-item">
             <a @click.prevent="changeDisplayedGraph('dotplot')" 
             class="nav-link"
@@ -40,10 +40,10 @@ export default {
         </li>
     </ul>
     <div class="d-lg-flex flex-column">
-        <div id="plot" class="d-lg-block js-plotly-plot" :class="{'d-none': graphDisplayed === 'timeline'}" ref="dotplot"></div>
+        <div id="plot" style="width: 100%; height: 400px;" class="d-lg-block js-plotly-plot" :class="{'d-none': graphDisplayed === 'timeline'}" ref="dotplot"></div>
         <div id="debug_plot" class="d-lg-block js-plotly-plot" :class="{'d-none': graphDisplayed === 'dotplot'}" ref="timeline"></div>
     </div>
-    <div class="text-center">
+    <div class="text-center my-3">
         <button 
             id="record"
             @mousedown="handleRecordPressed"

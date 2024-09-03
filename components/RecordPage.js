@@ -26,9 +26,9 @@ export default {
     <div class="flex-fill">
     <TikiMessage>Try pronouncing <a href="#" @click.prevent="playSample();" style="display:inline-block; text-decoration: underline dotted; font-weight:bold;">{{sound}} <i class="bi bi-play"></i></a>.</TikiMessage>
     <div class="d-flex justify-content-center">
-        <div id="plot" class="d-block w-75" ref="dotplot" style="width:100%; height: 500px;"></div>
+        <div id="plot" class="d-block w-75" ref="dotplot" style="width:100%; height: 400px;"></div>
     </div>
-    <div class="text-center">
+    <div class="text-center my-3">
         <button 
             v-if="!canContinue"
             id="record"

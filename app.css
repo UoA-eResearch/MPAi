@@ -1,12 +1,24 @@
 @media (min-width: 992px) and (min-height: 900px) {
+
+	/* Larger screen */
 	#doc {
 		height: 900px;
+	}
+
+	#debug_plot {
+		height: 200px;
 	}
 }
 
 @media (max-width: 992px) or (max-height: 900px) {
+
+	/*Mobile view.*/
 	#doc {
 		height: 100vh;
+	}
+
+	#debug_plot {
+		height: 400px;
 	}
 }
 

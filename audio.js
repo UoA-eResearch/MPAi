@@ -36,7 +36,7 @@ const timelineLayout = {
         title: "Bark scale frequency",
         range: [1, 24]
     },
-    height: 200,
+    autosize: true,
     hovermode: "x",
     plot_bgcolor: '#faffee',
     margin: {
@@ -134,12 +134,12 @@ export function initScatterplot(plotElement) {
             //title: "F1 (Bark)",
             title: "Mouth Openness (F1)"
         },
-        // height: 600,
+        autosize: true,
         margin: {
             l: 50,
             r: 50,
             b: 50,
-            t: 50,
+            t: 20,
         },
         showlegend: false
     }
