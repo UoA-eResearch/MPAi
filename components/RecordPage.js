@@ -31,10 +31,10 @@ export default {
         <button 
             v-if="!canContinue"
             id="record"
-            @mousedown="handleRecordPressed"
-            @touchstart="handleRecordPressed"
-            @mouseup="handleRecordReleased"
-            @touchend="handleRecordReleased"
+            @mousedown.prevent="handleRecordPressed"
+            @touchstart.prevent="handleRecordPressed"
+            @mouseup.prevent="handleRecordReleased"
+            @touchend.prevent="handleRecordReleased"
             :class="{recording: isRecording}"
             class="btn btn-primary"><i class="bi bi-mic"></i>Record</button>
     </div>
