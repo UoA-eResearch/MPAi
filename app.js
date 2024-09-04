@@ -11,6 +11,7 @@ import TuuRecordPage from './pages/TuuRecordPage.js';
 import FinishPage from './pages/FinishPage.js';
 import ModelSpeakerPage from './pages/ModelSpeakerPage.js';
 import translate from './translate.js';
+import PlaygroundExplanationPage from './pages/PlaygroundExplanationPage.js';
 
 window.config = config;
 
@@ -37,6 +38,7 @@ async function checkAudioPermission(to, from) {
 const appRoutes = [
     { name: 'welcome', path: '/', component: WelcomePage },
     { name: 'audiopermission', path: '/audiopermission', component: AudioPermissionPage },
+    { name: 'playground-explanation', path: '/playground-explanation', component: PlaygroundExplanationPage },
     { name: 'playground', path: '/playground', component: PlaygroundPage, beforeEnter: checkAudioPermission },
     { name: "model-speaker", path: "/model-speaker", component: ModelSpeakerPage },
     { name: 'taa-record', path: '/taa-record', component: TaaRecordPage, beforeEnter: checkAudioPermission },
