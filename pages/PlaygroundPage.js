@@ -63,15 +63,19 @@ export default {
             this.$router.push({ name: "model-speaker" });
         },
         handleRecordPressed() {
+            console.log("Record button pressed");
             if (!this.isRecording) {
                 this.isRecording = true;
                 startRecording();
+                console.log("Recording started");
             }
         },
         handleRecordReleased() {
+            console.log("Record button released");
             if (this.isRecording) {
                 this.isRecording = false;
                 stopRecording();
+                console.log("Recording stopped");
             }
         },
         handleSpacePressed(event) {

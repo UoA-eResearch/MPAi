@@ -59,16 +59,20 @@ export default {
             this.$router.replace(this.nextUrl);
         },
         handleRecordPressed() {
+            console.log("Record button pressed");
             if (!this.isRecording) {
                 this.isRecording = true;
                 startRecording();
+                console.log("Recording started");
             }
         },
         async handleRecordReleased() {
+            console.log("Record button released");
             if (this.isRecording) {
                 this.isRecording = false;
                 const blob = await stopRecording();
                 this.uploadAudio(blob);
+                console.log("Recording stopped");
             }
         },
         handleSpacePressed(event) {
