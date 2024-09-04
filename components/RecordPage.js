@@ -12,7 +12,7 @@ export default {
             config,
             resources,
             isRecording: false,
-            attemptsRemaining: 10
+            attemptsRemaining: 5
         }
     },
     computed: {
@@ -38,6 +38,9 @@ export default {
             :class="{recording: isRecording}"
             class="btn btn-primary"><i class="bi bi-mic"></i>Record</button>
     </div>
+    <p v-if="!canContinue" class="text-center">
+        Try pronouncing it {{attemptsRemaining}} {{attemptsRemaining !== config.attemptsAllowed ? "more" : ""}} {{attemptsRemaining > 1 ? "times" : "time"}}. 
+    </p>
     <BottomBar :isContinueEnabled="canContinue" @continue-click="nextClicked()" />
     `,
     watch: {
