@@ -8,7 +8,7 @@ export default {
     components: { TopBar, BottomBar, TikiMessage },
     template: `
         <TopBar @prev-click="prevClicked()" />
-        <div class="flex-fill">
+        <div class="flex-grow-1 ">
             <TikiMessage>
                 <template v-if="!hasGrantedPermission">Before we go on, I need to be able to hear you.</template>
                 <template v-if="hasGrantedPermission">Ka pai. Try saying something.</template>
@@ -46,7 +46,7 @@ export default {
             if (this.$route.redirectedFrom) {
                 this.$router.push(this.$route.redirectedFrom);
             } else {
-                this.$router.push({ name: "playground" });
+                this.$router.push({ name: "playground-explanation" });
             }
         },
         analyserVisibilityChanged(element) {

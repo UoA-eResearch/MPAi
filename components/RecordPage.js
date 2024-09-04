@@ -23,10 +23,9 @@ export default {
     components: { TopBar, TikiMessage, BottomBar },
     template: `
     <TopBar @prev-click="prevClicked()" :speakerOptionEnabled="true" />
-    <div class="flex-fill">
     <TikiMessage>Try pronouncing <a href="#" @click.prevent="playSample();" style="display:inline-block; text-decoration: underline dotted; font-weight:bold;">{{sound}} <i class="bi bi-play"></i></a>.</TikiMessage>
-    <div class="d-flex justify-content-center">
-        <div id="plot" class="d-block" ref="dotplot" style="width:100%; height: 400px;"></div>
+    <div class="d-flex justify-content-center flex-grow-1">
+        <div class="d-block" ref="dotplot" style="width:100%; height: 100%;"></div>
     </div>
     <div class="text-center my-3">
         <button 
@@ -38,8 +37,6 @@ export default {
             @touchend="handleRecordReleased"
             :class="{recording: isRecording}"
             class="btn btn-primary"><i class="bi bi-mic"></i>Record</button>
-    </div>
-
     </div>
     <BottomBar :isContinueEnabled="canContinue" @continue-click="nextClicked()" />
     `,

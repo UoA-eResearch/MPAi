@@ -43,7 +43,7 @@ const timelineLayout = {
         l: 50,
         r: 50,
         b: 50,
-        t: 50,
+        t: 20,
     },
 }
 
