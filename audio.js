@@ -1,6 +1,7 @@
 import "https://cdn.plot.ly/plotly-2.31.1.min.js";
 import "./forest.js";
 import "./ksvF0.js";
+import "./recorder.js";
 // Extracted audio code from main.js.
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
