@@ -10,8 +10,8 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script type="text/javascript" src="forest.js"></script> <!-- Formant Estimator -->
   <script type="text/javascript" src="ksvF0.js"></script> <!-- Pitch Detector F0 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
     integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -34,38 +34,58 @@
       You can tap on the plot to hear the vowel sound produced by the kaumātua speaker. You can also record your own
     </div>
   </div>
-  <div id="plot"></div>
-  <div id="controls">
-    Kaumātua Speaker:
-    <select id="speaker" class="form-select">
-      <option selected="selected">Female</option>
-      <option>Male</option>
-    </select>
-    Microphone:
-    <select id="mic"></select>
-    Vowel:
-    <select id="vowel" class="form-select">
-      <option selected="selected">a</option>
-      <option>e</option>
-      <option>i</option>
-      <option>o</option>
-      <option>u</option>
-    </select>
-      <button id="play" class="btn btn-primary"><i class="bi bi-play"></i> Play</button>
-      <button id="compare" class="btn btn-primary" disabled><i class="bi bi-arrow-left"></i> Compare</button>
-      <button id="erase" class="btn btn-primary"><i class="bi bi-eraser"></i> Erase previous dots</button>
-    <br>
-    <div id="viz_container">
-      <div id="viz">
-        <canvas id="analyser"></canvas>
-        <canvas id="wavedisplay"></canvas>
+  <div class="container">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="setup-tab" data-bs-toggle="tab" data-bs-target="#setup-tab-pane" type="button" role="tab" aria-controls="setup-tab-pane" aria-selected="true">Setup</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="formants-tab" data-bs-toggle="tab" data-bs-target="#formants-tab-pane" type="button" role="tab" aria-controls="formants-tab-pane" aria-selected="false">Formants</button>
+      </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="setup-tab-pane" role="tabpanel" aria-labelledby="setup-tab" tabindex="0" style="text-align: center">
+        <div class="mb-3" style="margin-top: 20px">
+          Kaumātua Speaker:
+          <select id="speaker" class="form-select">
+            <option selected="selected">Female</option>
+            <option>Male</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          Microphone:
+          <select class="form-select" style="max-width: 50%" id="mic"></select>
+        </div>
+        <div id="viz_container">
+          <div id="viz">
+            <canvas id="analyser"></canvas>
+            <canvas id="wavedisplay"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="formants-tab-pane" role="tabpanel" aria-labelledby="formants-tab" tabindex="0">
+        <div id="plot"></div>
+        <div id="controls">
+          Vowel:
+          <select id="vowel" class="form-select">
+            <option selected="selected">a</option>
+            <option>e</option>
+            <option>i</option>
+            <option>o</option>
+            <option>u</option>
+          </select>
+            <button id="play" class="btn btn-primary"><i class="bi bi-play"></i> Play</button>
+            <button id="compare" class="btn btn-primary" disabled><i class="bi bi-arrow-left"></i> Compare</button>
+            <button id="erase" class="btn btn-primary"><i class="bi bi-eraser"></i> Erase previous dots</button>
+          <br>
+          <button id="record" class="btn btn-primary"><i class="bi bi-mic"></i> Record</button>
+        </div>
+        <div id="status"></div>
+        <div id="upload_status"></div>
+        <div id="debug_plot"></div>
       </div>
     </div>
-    <button id="record" class="btn btn-primary"><i class="bi bi-mic"></i> Record</button>
-    <div id="status"></div>
-    <div id="upload_status"></div>
   </div>
-  <div id="debug_plot"></div>
   <script src="main.js"></script>
   <script type="text/javascript">
     window.addEventListener('load', initAudio);
