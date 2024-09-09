@@ -15,9 +15,9 @@ export default {
     }
   },
   template: `
-    <div class="d-flex flex-row-reverse py-3">
+    <header class="d-flex flex-row-reverse py-3">
       <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#acknowledgements" >Acknowledgements</button>
-    </div>
+    </header>
     <div class="d-flex flex-column h-100 flex-column justify-content-center">
       <div class="text-center">
         <img src="images/tiki_glasses_single.png" height="100px"/>
