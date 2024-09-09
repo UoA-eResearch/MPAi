@@ -1,3 +1,6 @@
+import "https://cdn.plot.ly/plotly-2.31.1.min.js";
+import "./forest.js";
+import "./ksvF0.js";
 // Extracted audio code from main.js.
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -232,20 +235,6 @@ export function updateFormantEllipses(plotElement, formants, highlightedVowel) {
 
 }
 
-export function fetchKaumatuaFormants() {
-    return new Promise(function (resolve, reject) {
-        Papa.parse("kaumatua_monoVowel_formantData.csv", {
-            header: true,
-            download: true,
-            dynamicTyping: true,
-            skipEmptyLines: true,
-            complete: function (results) {
-                resolve(results.data);
-            }
-        });
-    });
-}
-
 function createFormantShape(formant, isHighlighted) {
     const shapes = [];
     const step = .05;
@@ -394,8 +383,8 @@ export function startRecording() {
 }
 
 // Cache WASM
-ksvF0({ arguments: ["-X"] })
-forest({ arguments: ["-X"] })
+window.ksvF0({ arguments: ["-X"] })
+window.forest({ arguments: ["-X"] })
 
 
 function parse_FMS(fms) {
@@ -444,7 +433,7 @@ async function doneEncoding(blob, post = true) {
     content = new Uint8Array(content)
     var start = performance.now()
 
-    ksvF0({ noInitialRun: true }).then(async function (Module) {
+    window.ksvF0({ noInitialRun: true }).then(async function (Module) {
         Module.FS.writeFile("1.wav", content)
         var args = [
             "1.wav", // input file
@@ -457,7 +446,7 @@ async function doneEncoding(blob, post = true) {
         }
         Module.callMain(args)
         var pitch_results = parse_F0(Module.FS.readFile("1.f0", { encoding: "utf8" }))
-        forest({ noInitialRun: true }).then(async function (Module) {
+        window.forest({ noInitialRun: true }).then(async function (Module) {
             Module.FS.writeFile("1.wav", content)
             var args = [
                 "1.wav", // input file
