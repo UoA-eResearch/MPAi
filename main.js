@@ -208,6 +208,7 @@ $("#plot").click(function (evt) {
     }
     var vowel = trace.text[minIdx]
     console.log("Clicked", vowel, minDist)
+    $("#vowel").val(vowel)
     var speaker = $("#speaker").val()
     var filename = "samples/" + sample_lookup[`${speaker}|${vowel}`]
     fetch(filename).then(r => r.blob()).then(async function (r) {
@@ -440,7 +441,7 @@ async function doneEncoding(blob, post = true) {
                 },
                 hovermode: "x"
             }
-            Plotly.newPlot('debug_plot', debug_traces, debug_layout)//, {staticPlot: true});
+            Plotly.newPlot('debug_plot', debug_traces, debug_layout, {responsive: true})//, {staticPlot: true});
             debug_plot.on("plotly_hover", function (data) {
                 console.log(data);
                 var points = data.points

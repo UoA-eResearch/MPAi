@@ -46,10 +46,10 @@ export default {
     <div class="text-center my-3">
         <button 
             id="record"
-            @mousedown="handleRecordPressed"
-            @touchstart="handleRecordPressed"
-            @mouseup="handleRecordReleased"
-            @touchend="handleRecordReleased"
+            @mousedown.prevent="handleRecordPressed"
+            @touchstart.prevent="handleRecordPressed"
+            @mouseup.prevent="handleRecordReleased"
+            @touchend.prevent="handleRecordReleased"
             :class="{recording: isRecording}"
             class="btn btn-primary"><i class="bi bi-mic"></i>Record</button>
     </div>
@@ -63,15 +63,19 @@ export default {
             this.$router.push({ name: "model-speaker" });
         },
         handleRecordPressed() {
+            console.log("Record button pressed");
             if (!this.isRecording) {
                 this.isRecording = true;
                 startRecording();
+                console.log("Recording started");
             }
         },
         handleRecordReleased() {
+            console.log("Record button released");
             if (this.isRecording) {
                 this.isRecording = false;
                 stopRecording();
+                console.log("Recording stopped");
             }
         },
         handleSpacePressed(event) {
