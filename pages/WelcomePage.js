@@ -28,15 +28,15 @@ export default {
       </div>
     </div>
     <div class="mb-3 col-12 col-lg-6 text-center mx-auto">
-      <div class="form-check d-inline-block ps-0">  
+      <div class="d-inline-block">  
         <input type="radio" class="btn-check" @change="config.language = 'en'" name="lang" id="btn-en" :checked="config.language === 'en'" autocomplete="off">
         <label class="btn" for="btn-en">English</label>
       </div>
       <!-- Māori option has a popover to explain limitation of the translation. -->
-      <div class="form-check d-inline-block ps-0"
+      <div class="d-inline-block"
       ref="maoriToggle"
         data-bs-offset="0,15"
-        data-bs-trigger="focus"
+        data-bs-trigger="focus click"
         data-bs-container="body"
         data-bs-toggle="popover"
         data-bs-placement="top"
