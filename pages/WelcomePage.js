@@ -28,11 +28,23 @@ export default {
       </div>
     </div>
     <div class="mb-3 col-12 col-lg-6 text-center mx-auto">
-      <input type="radio" class="btn-check" @change="config.language = 'en'" name="lang" id="btn-en" :checked="config.language === 'en'" autocomplete="off">
-      <label class="btn" for="btn-en">English</label>
-
+      <div class="form-check d-inline-block">  
+        <input type="radio" class="btn-check" @change="config.language = 'en'" name="lang" id="btn-en" :checked="config.language === 'en'" autocomplete="off">
+        <label class="btn" for="btn-en">English</label>
+      </div>
+      <!-- Māori option has a popover to explain limitation of the translation. -->
+      <div class="form-check d-inline-block"
+      ref="maoriToggle"
+        data-bs-offset="0,15"
+        data-bs-trigger="focus"
+        data-bs-container="body"
+        data-bs-toggle="popover"
+        data-bs-placement="top"
+        data-bs-content="Te reo Māori will be used for some terms."
+      >
       <input type="radio" @change="config.language = 'mi'" :checked="config.language === 'mi'" class="btn-check" name="lang" id="btn-mi" autocomplete="off">
-      <label class="btn" for="btn-mi">Te reo Māori</label>
+      <label class="btn" id="btn-mi-label" for="btn-mi">Te reo Māori</label>
+      </div>
     </div>
     <BottomBar :isContinueEnabled="true" @continueClick="goNext()" /> 
     <div class="modal fade" id="acknowledgements" tabindex="-1" aria-labelledby="ackModalLabel" aria-hidden="true">
@@ -59,4 +71,7 @@ export default {
       this.$router.push({ name: "audiopermission" });
     }
   },
+  mounted() {
+    new bootstrap.Popover(this.$refs.maoriToggle);
+  }
 }
