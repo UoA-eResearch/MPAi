@@ -1,4 +1,4 @@
-import "https://cdn.plot.ly/plotly-2.31.1.min.js";
+import "https://cdn.plot.ly/plotly-basic-2.35.1.min.js";
 import "./forest.js";
 import "./ksvF0.js";
 import "./recorder.js";
