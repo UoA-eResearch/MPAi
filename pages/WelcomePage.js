@@ -36,7 +36,7 @@ export default {
       <div class="d-inline-block"
       ref="maoriToggle"
         data-bs-offset="0,15"
-        data-bs-trigger="focus click"
+        data-bs-trigger="focus"
         data-bs-container="body"
         data-bs-toggle="popover"
         data-bs-placement="top"
