@@ -1,16 +1,8 @@
 import WelcomePage from './pages/WelcomePage.js';
-import AudioPermissionPage from './pages/AudioPermissionPage.js';
-import PlaygroundPage from './pages/PlaygroundPage.js';
 import { config, resources } from './store.js';
-import { fetchKaumatuaFormants } from './audio.js'
-import TaaRecordPage from './pages/TaaRecordPage.js';
-import HeeRecordPage from './pages/HeeRecordPage.js';
-import HiiRecordPage from './pages/HiiRecordPage.js';
-import PooRecordPage from './pages/PooRecordPage.js';
-import TuuRecordPage from './pages/TuuRecordPage.js';
 import FinishPage from './pages/FinishPage.js';
 import ModelSpeakerPage from './pages/ModelSpeakerPage.js';
-import translate from './translate.js';
+// import translate from './translate.js';
 import PlaygroundExplanationPage from './pages/PlaygroundExplanationPage.js';
 
 window.config = config;
@@ -37,15 +29,15 @@ async function checkAudioPermission(to, from) {
 
 const appRoutes = [
     { name: 'welcome', path: '/', component: WelcomePage },
-    { name: 'audiopermission', path: '/audiopermission', component: AudioPermissionPage },
+    { name: 'audiopermission', path: '/audiopermission', component: () => import("./pages/AudioPermissionPage.js") },
     { name: 'playground-explanation', path: '/playground-explanation', component: PlaygroundExplanationPage },
-    { name: 'playground', path: '/playground', component: PlaygroundPage, beforeEnter: checkAudioPermission },
+    { name: 'playground', path: '/playground', component: () => import("./pages/PlaygroundPage.js"), beforeEnter: checkAudioPermission },
     { name: "model-speaker", path: "/model-speaker", component: ModelSpeakerPage },
-    { name: 'taa-record', path: '/taa-record', component: TaaRecordPage, beforeEnter: checkAudioPermission },
-    { name: 'hee-record', path: '/hee-record', component: HeeRecordPage, beforeEnter: checkAudioPermission },
-    { name: 'hii-record', path: '/hii-record', component: HiiRecordPage, beforeEnter: checkAudioPermission },
-    { name: 'poo-record', path: '/poo-record', component: PooRecordPage, beforeEnter: checkAudioPermission },
-    { name: 'tuu-record', path: '/tuu-record', component: TuuRecordPage, beforeEnter: checkAudioPermission },
+    { name: 'taa-record', path: '/taa-record', component: () => import("./pages/TaaRecordPage.js"), beforeEnter: checkAudioPermission },
+    { name: 'hee-record', path: '/hee-record', component: () => import("./pages/HeeRecordPage.js"), beforeEnter: checkAudioPermission },
+    { name: 'hii-record', path: '/hii-record', component: () => import("./pages/HiiRecordPage.js"), beforeEnter: checkAudioPermission },
+    { name: 'poo-record', path: '/poo-record', component: () => import("./pages/PooRecordPage.js"), beforeEnter: checkAudioPermission },
+    { name: 'tuu-record', path: '/tuu-record', component: () => import("./pages/TuuRecordPage.js"), beforeEnter: checkAudioPermission },
     { name: 'finish', path: '/finish', component: FinishPage }
 ];
 
@@ -67,6 +59,19 @@ if (urlParams.has("attemptsAllowed")) {
     console.log(`Setting attempts allowed for recording to ${config.attemptsAllowed}`);
 }
 
+function fetchKaumatuaFormants() {
+    return new Promise(function (resolve, reject) {
+        Papa.parse("kaumatua_monoVowel_formantData.csv", {
+            header: true,
+            download: true,
+            dynamicTyping: true,
+            skipEmptyLines: true,
+            complete: function (results) {
+                resolve(results.data);
+            }
+        });
+    });
+}
 
 // Fetch model speakers and select the first one as default.
 resources.modelSpeakerOptions = await (await fetch("samples/samples.json")).json();
@@ -76,5 +81,5 @@ config.modelSpeaker = resources.modelSpeakerOptions[0];
 
 const app = Vue.createApp({});
 app.use(router);
-app.use(translate);
+// app.use(translate);
 app.mount("#doc");
