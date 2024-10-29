@@ -99,6 +99,7 @@ export default {
         },
         echo() {
             const lastRecording = getLastRecording();
+            // setTimeout(this.playSample, lastRecording.duration * 1000 + 500);
             lastRecording.addEventListener("ended", () => {
                 setTimeout(this.playSample, 500);
             });
