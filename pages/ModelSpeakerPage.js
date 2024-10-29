@@ -36,7 +36,7 @@ export default {
             this.$router.replace({ name: "taa-record" });
         },
         prevClicked() {
-            this.$router.replace({ name: 'playground' });
+            this.$router.back();
         }
     }
 }

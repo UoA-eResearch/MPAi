@@ -31,7 +31,8 @@ const appRoutes = [
     { name: 'welcome', path: '/', component: WelcomePage },
     { name: 'audiopermission', path: '/audiopermission', component: () => import("./pages/AudioPermissionPage.js") },
     { name: 'playground-explanation', path: '/playground-explanation', component: PlaygroundExplanationPage },
-    { name: 'playground', path: '/playground', component: () => import("./pages/PlaygroundPage.js"), beforeEnter: checkAudioPermission },
+    { name: 'playground', path: '/playground/', redirect: '/playground/a' },// component: () => import("./pages/PlaygroundPage.js"), beforeEnter: checkAudioPermission },
+    { path: "/playground/:vowel", name: 'playground-vowel', component: () => import("./pages/PlaygroundPage.js"), beforeEnter: checkAudioPermission },
     { name: "model-speaker", path: "/model-speaker", component: ModelSpeakerPage },
     { name: 'taa-record', path: '/taa-record', component: () => import("./pages/TaaRecordPage.js"), beforeEnter: checkAudioPermission },
     { name: 'hee-record', path: '/hee-record', component: () => import("./pages/HeeRecordPage.js"), beforeEnter: checkAudioPermission },
@@ -74,7 +75,11 @@ function fetchKaumatuaFormants() {
 }
 
 // Fetch model speakers and select the first one as default.
-resources.modelSpeakerOptions = await (await fetch("samples/samples.json")).json();
+const samples = (await (await fetch("samples/samples.json")).json());
+resources.modelSpeakerOptions = samples.speakers;
+// Create a map of vowels by sounds.
+resources.sounds = samples.sounds;
+
 resources.speakerFormants = await fetchKaumatuaFormants();
 // Set model speaker to default to first in options.
 config.modelSpeaker = resources.modelSpeakerOptions[0];

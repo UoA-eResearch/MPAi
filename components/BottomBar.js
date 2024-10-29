@@ -1,28 +1,13 @@
 export default {
-    props: ['isContinueEnabled'],
-    data() {
-        return {
-            isLoadingNextPage: false
-        }
-    },
-    methods: {
-        continueClicked() {
-            this.$emit('continue-click');
-            // On slow page loads, we show a loading spinner on the button
-            // after a short delay, to indicate the page is working.
-            setTimeout(() => {
-                this.isLoadingNextPage = true;
-            }, 100);
-        }
-    },
+    props: ['isContinueEnabled', 'isLoading'],
     template: `
     <footer id="bottom-controls" class="mb-3 d-grid col-12 col-lg-6 mx-auto">
-        <a @click.prevent="continueClicked"  
+        <a @click.prevent="this.$emit('continue-click')"  
         id="btn-continue" 
         class="d-block btn btn-primary" 
-        :class="{disabled: !isContinueEnabled || isLoadingNextPage}"
-        :aria-disabled="!isContinueEnabled || isLoadingNextPage">
-        <template v-if="!isLoadingNextPage">
+        :class="{disabled: !isContinueEnabled || isLoading}"
+        :aria-disabled="!isContinueEnabled || isLoading">
+        <template v-if="!isLoading">
             Continue
         </template>
         <template v-else>

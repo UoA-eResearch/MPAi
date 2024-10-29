@@ -1,46 +1,70 @@
-[
-    {
-        "name": "oldfemale",
-        "displayName": "Traditional female",
-        "gender": "female",
-        "samples": {
-            "tā": [
-                "samples/oldfemale-word-taa-R001M.wav"
-            ],
-            "hē": [
-                "samples/oldfemale-word-hee-R001M.wav"
-            ],
-            "hī": [
-                "samples/oldfemale-word-hii-R001M.wav"
-            ],
-            "pō": [
-                "samples/oldfemale-word-poo-R001M.wav"
-            ],
-            "tū": [
-                "samples/oldfemale-word-tuu-R001M.wav"
-            ]
+{
+    "sounds": [
+        {
+            "name": "tā",
+            "vowel": "a"
+        },
+        {
+            "name": "hē",
+            "vowel": "e"
+        },
+        {
+            "name": "hī",
+            "vowel": "i"
+        },
+        {
+            "name": "pō",
+            "vowel": "o"
+        },
+        {
+            "name": "tū",
+            "vowel": "u"
         }
-    },
-    {
-        "name": "oldmale",
-        "displayName": "Traditional male",
-        "gender": "male",
-        "samples": {
-            "tā": [
-                "samples/oldmale-word-taa-K004M.wav"
-            ],
-            "hē": [
-                "samples/oldmale-word-hee-K004M.wav"
-            ],
-            "hī": [
-                "samples/oldmale-word-hii-K004M.wav"
-            ],
-            "pō": [
-                "samples/oldmale-word-poo-K004M.wav"
-            ],
-            "tū": [
-                "samples/oldmale-word-tuu-K004M.wav"
-            ]
+    ],
+    "speakers": [
+        {
+            "name": "oldfemale",
+            "displayName": "Traditional female",
+            "gender": "female",
+            "samples": {
+                "tā": [
+                    "samples/oldfemale-word-taa-R001M.wav"
+                ],
+                "hē": [
+                    "samples/oldfemale-word-hee-R001M.wav"
+                ],
+                "hī": [
+                    "samples/oldfemale-word-hii-R001M.wav"
+                ],
+                "pō": [
+                    "samples/oldfemale-word-poo-R001M.wav"
+                ],
+                "tū": [
+                    "samples/oldfemale-word-tuu-R001M.wav"
+                ]
+            }
+        },
+        {
+            "name": "oldmale",
+            "displayName": "Traditional male",
+            "gender": "male",
+            "samples": {
+                "tā": [
+                    "samples/oldmale-word-taa-K004M.wav"
+                ],
+                "hē": [
+                    "samples/oldmale-word-hee-K004M.wav"
+                ],
+                "hī": [
+                    "samples/oldmale-word-hii-K004M.wav"
+                ],
+                "pō": [
+                    "samples/oldmale-word-poo-K004M.wav"
+                ],
+                "tū": [
+                    "samples/oldmale-word-tuu-K004M.wav"
+                ]
+            }
         }
-    }
-]
+    ]
+}

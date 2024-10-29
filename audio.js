@@ -77,6 +77,8 @@ export function getLastRecording() {
 
 export function initScatterplot(plotElement) {
     scatterplotElement = plotElement;
+    // Remove traces to reset the plot.
+    traces = [];
 
     layout = {
         plot_bgcolor: '#faffee',
