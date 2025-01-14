@@ -1,5 +1,5 @@
 import WelcomePage from './pages/WelcomePage.js';
-import {appState, config, resources} from './store.js';
+import { config, resources} from './store.js';
 import FinishPage from './pages/FinishPage.js';
 import ModelSpeakerPage from './pages/ModelSpeakerPage.js';
 // import translate from './translate.js';

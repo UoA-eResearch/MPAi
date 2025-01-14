@@ -9,7 +9,8 @@ export const config = Vue.reactive({
 });
 
 export const appState = Vue.reactive({
-  hasShownKeyboardHint: false
+  hasShownKeyboardHint: false,
+  hasShownPlaySampleHint: false
 })
 
 export const resources = Vue.reactive({

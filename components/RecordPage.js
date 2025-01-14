@@ -1,7 +1,7 @@
 import TopBar from "../components/TopBar.js";
 import TikiMessage from "../components/TikiMessage.js";
 import BottomBar from "../components/BottomBar.js";
-import { config, resources } from "../store.js";
+import {appState, config, resources} from "../store.js";
 import { startRecording, stopRecording, initScatterplot, uploadAudioBlob, updateFormantEllipses, updateAnnotations, getLastRecording, setSpeakerGender } from '../audio.js';
 
 
@@ -10,6 +10,7 @@ export default {
     data() {
         return {
             config,
+            appState,
             resources,
             isRecording: false,
             attemptsRemaining: 5
@@ -23,7 +24,16 @@ export default {
     components: { TopBar, TikiMessage, BottomBar },
     template: `
     <TopBar @prev-click="prevClicked()" :speakerOptionEnabled="true" />
-    <TikiMessage>Try pronouncing <a href="#" @click.prevent="playSample();" style="display:inline-block; text-decoration: underline dotted; font-weight:bold;">{{sound}} <i class="bi bi-play"></i></a>.</TikiMessage>
+    <TikiMessage>Try pronouncing <div class="d-inline-block"
+                   ref="playSampleHint"
+                   data-bs-trigger="manual"
+                   data-bs-container="body"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="bottom"
+                   data-bs-title="Press here to play the sound again."
+        >
+<a href="#" @click.prevent="playSample();" style="display:inline-block; text-decoration: underline dotted; font-weight:bold;">{{sound}} <i class="bi bi-play"></i></a>
+</div>.</TikiMessage>
     <div class="d-flex justify-content-center flex-grow-1">
         <div class="d-block" ref="dotplot" style="width:100%; height: 100%;"></div>
     </div>
@@ -137,6 +147,14 @@ export default {
         window.addEventListener('keyup', this.handleSpaceReleased);
         // Play the sample on page load.
         this.playSample();
+        if (!this.appState.hasShownPlaySampleHint) {
+            const playSampleHint = new bootstrap.Tooltip(this.$refs.playSampleHint);
+            playSampleHint.show();
+            this.appState.hasShownPlaySampleHint = true;
+            setTimeout(() => {
+                playSampleHint.hide()
+            }, 5000);
+        }
     },
     unmounted() {
         window.removeEventListener('keydown', this.handleSpacePressed);
