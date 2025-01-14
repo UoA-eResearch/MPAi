@@ -46,10 +46,9 @@ export default {
                    data-bs-offset="0,15"
                    data-bs-trigger="manual"
                    data-bs-container="body"
-                   data-bs-toggle="popover"
+                   data-bs-toggle="tooltip"
                    data-bs-placement="top"
-                   data-bs-html="true"
-                   data-bs-content="Testing"
+                   data-bs-title="Testing"
         >
             <button 
                 id="record"
@@ -66,6 +65,8 @@ export default {
         "sound": function () {
             // When sound has changed, reinitialise plots to erase previous traces.
             this.initialisePlots();
+            // Remove any tooltips currently being displayed.
+            this.clearTooltip();
         }
     },
     methods: {
@@ -102,14 +103,14 @@ export default {
         },
         clearTooltip() {
             // Hide and destroy the tooltip.
-            const tooltip = bootstrap.Popover.getOrCreateInstance(this.$refs.recordTooltip);
+            const tooltip = bootstrap.Tooltip.getOrCreateInstance(this.$refs.recordTooltip);
             tooltip.dispose();
             clearTimeout(this.toolTipTimeoutId);
         },
         showNoSoundError() {
-            const tooltip = bootstrap.Popover.getOrCreateInstance(this.$refs.recordTooltip);
+            const tooltip = bootstrap.Tooltip.getOrCreateInstance(this.$refs.recordTooltip);
             tooltip.setContent({
-                ".popover-body":"<p>Couldn't hear you. Check your microphone?</p>"
+                ".tooltip-inner":"Couldn't hear you. Check your microphone?"
             });
             tooltip.show();
             // Hide the tooltip 5 seconds later and stop hint from showing next time.
@@ -127,9 +128,9 @@ export default {
         showKeyboardHintIfNeeded() {
             // Shows hint for Space bar if it's not been shown before and we are on a desktop computer.
             if (!this.appState.hasShownKeyboardHint && !window.isMobileOrTablet()) {
-                const tooltip = bootstrap.Popover.getOrCreateInstance(this.$refs.recordTooltip);
+                const tooltip = bootstrap.Tooltip.getOrCreateInstance(this.$refs.recordTooltip);
                 tooltip.setContent({
-                    ".popover-body":"<p>Ka pai! You can also press and hold Space bar to record.</p>"
+                    ".tooltip-inner":"Ka pai! You can also press and hold Space bar to record."
                 });
                 tooltip.show();
                 // Hide the tooltip 5 seconds later and stop hint from showing next time.
@@ -182,11 +183,13 @@ export default {
     },
     mounted() {
         this.initialisePlots();
-        new bootstrap.Popover(this.$refs.recordTooltip);
+        new bootstrap.Tooltip(this.$refs.recordTooltip);
         window.addEventListener('keydown', this.handleSpacePressed);
         window.addEventListener('keyup', this.handleSpaceReleased);
     },
-    unmounted() {
+    beforeUnmount() {
+        // Clean up any tooltips currently showing.
+        this.clearTooltip();
         window.removeEventListener('keydown', this.handleSpacePressed);
         window.removeEventListener('keyup', this.handleSpaceReleased);
     }
