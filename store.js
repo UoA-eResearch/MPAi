@@ -8,6 +8,10 @@ export const config = Vue.reactive({
   language: 'en' // en or mi
 });
 
+export const appState = Vue.reactive({
+  hasShownKeyboardHint: false
+})
+
 export const resources = Vue.reactive({
   modelSpeakerOptions: [],
   speakerFormants: []

@@ -9,11 +9,6 @@ export default {
       config
     }
   },
-  methods: {
-    changeLanguage(lang) {
-      config.language = lang;
-    }
-  },
   template: `
     <header class="d-flex flex-row-reverse py-3">
       <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#acknowledgements" >Acknowledgements</button>

@@ -1,5 +1,5 @@
 import { initialiseTimeline, initScatterplot, startRecording, stopRecording, updateAnnotations } from "../audio.js";
-import { config, resources } from '../store.js'
+import { config, resources, appState } from '../store.js'
 
 
 export default {
@@ -7,10 +7,13 @@ export default {
     data() {
         return {
             config,
+            appState,
             resources,
             graphDisplayed: "dotplot",
             isRecording: false,
-            isTimelineInitialised: false
+            isTimelineInitialised: false,
+            recordTooltip: null,
+            toolTipTimeoutId: null
         }
     },
     template: `
@@ -38,14 +41,25 @@ export default {
         <div id="playground-timeline" class="d-lg-block js-plotly-plot" :class="{'d-none': graphDisplayed === 'dotplot'}" ref="timeline"></div>
     </div>
     <div class="text-center my-3">
-        <button 
-            id="record"
-            @mousedown.prevent="handleRecordPressed"
-            @touchstart.prevent="handleRecordPressed"
-            @mouseup.prevent="handleRecordReleased"
-            @touchend.prevent="handleRecordReleased"
-            :class="{recording: isRecording}"
-            class="btn btn-primary"><i class="bi bi-mic"></i>Record</button>
+        <div class="d-inline-block"
+                   ref="recordTooltip"
+                   data-bs-offset="0,15"
+                   data-bs-trigger="manual"
+                   data-bs-container="body"
+                   data-bs-toggle="popover"
+                   data-bs-placement="top"
+                   data-bs-html="true"
+                   data-bs-content="Testing"
+        >
+            <button 
+                id="record"
+                @mousedown.prevent="handleRecordPressed"
+                @touchstart.prevent="handleRecordPressed"
+                @mouseup.prevent="handleRecordReleased"
+                @touchend.prevent="handleRecordReleased"
+                :class="{recording: isRecording}"
+                class="btn btn-primary"><i class="bi bi-mic"></i>Record</button>
+        </div>
     </div>
     `,
     watch: {
@@ -57,30 +71,82 @@ export default {
     methods: {
         handleRecordPressed() {
             console.log("Record button pressed");
+            this.clearTooltip();
             if (!this.isRecording) {
                 this.isRecording = true;
                 startRecording();
                 console.log("Recording started");
             }
         },
-        handleRecordReleased() {
+        async handleRecordReleased() {
             console.log("Record button released");
             if (this.isRecording) {
                 this.isRecording = false;
-                stopRecording();
-                console.log("Recording stopped");
+                try {
+                    console.log("Recording stopped");
+                    await stopRecording();
+                    this.showKeyboardHintIfNeeded();
+                } catch (err) {
+                    this.showNoSoundError();
+                }
             }
         },
         handleSpacePressed(event) {
             if (event.code === 'Space' && !this.isRecording) {
+                this.clearTooltip();
                 this.isRecording = true;
+                // Disable showing keyboard hint
+                this.appState.hasShownKeyboardHint = true;
                 startRecording();
+            }
+        },
+        clearTooltip() {
+            // Hide and destroy the tooltip.
+            const tooltip = bootstrap.Popover.getOrCreateInstance(this.$refs.recordTooltip);
+            tooltip.dispose();
+            clearTimeout(this.toolTipTimeoutId);
+        },
+        showNoSoundError() {
+            const tooltip = bootstrap.Popover.getOrCreateInstance(this.$refs.recordTooltip);
+            tooltip.setContent({
+                ".popover-body":"<p>Couldn't hear you. Check your microphone?</p>"
+            });
+            tooltip.show();
+            // Hide the tooltip 5 seconds later and stop hint from showing next time.
+            this.toolTipTimeoutId = setTimeout(() => {
+                console.log("Hiding tooltip");
+                tooltip.hide();
+            }, 5000);
+        },
+        showTooShortError() {
+
+        },
+        handleFailedRecording() {
+
+        },
+        showKeyboardHintIfNeeded() {
+            // Shows hint for Space bar if it's not been shown before and we are on a desktop computer.
+            if (!this.appState.hasShownKeyboardHint && !window.isMobileOrTablet()) {
+                const tooltip = bootstrap.Popover.getOrCreateInstance(this.$refs.recordTooltip);
+                tooltip.setContent({
+                    ".popover-body":"<p>Ka pai! You can also press and hold Space bar to record.</p>"
+                });
+                tooltip.show();
+                // Hide the tooltip 5 seconds later and stop hint from showing next time.
+                setTimeout(() => {
+                    tooltip.hide();
+                    this.appState.hasShownKeyboardHint = true;
+                }, 5000);
             }
         },
         async handleSpaceReleased(event) {
             if (event.code === 'Space' && this.isRecording) {
                 this.isRecording = false;
-                stopRecording();
+                try {
+                    await stopRecording();
+                } catch (err) {
+                    this.showNoSoundError();
+                }
             }
         },
 
@@ -116,6 +182,7 @@ export default {
     },
     mounted() {
         this.initialisePlots();
+        new bootstrap.Popover(this.$refs.recordTooltip);
         window.addEventListener('keydown', this.handleSpacePressed);
         window.addEventListener('keyup', this.handleSpaceReleased);
     },

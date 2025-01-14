@@ -436,91 +436,95 @@ async function doneEncoding(blob, post = true) {
     content = new Uint8Array(content)
     var start = performance.now()
 
-    window.ksvF0({ noInitialRun: true }).then(async function (Module) {
-        Module.FS.writeFile("1.wav", content)
-        var args = [
-            "1.wav", // input file
-            "-oA", // output in XASSP ASCII format
-        ]
-        if (speaker == "female") {
-            args.push("-g=f")
-        } else {
-            args.push("-g=m")
-        }
-        Module.callMain(args)
-        var pitch_results = parse_F0(Module.FS.readFile("1.f0", { encoding: "utf8" }))
-        window.forest({ noInitialRun: true }).then(async function (Module) {
-            Module.FS.writeFile("1.wav", content)
-            var args = [
-                "1.wav", // input file
-                "-oA", // output in plain ASCII format
-                //"-L=49", // set effective length of analysis window to <dur> ms (default: 20.0)
-                "-n=2", // set number of output formants to <num> (default: 4;  maximum: 8 or half the LP order)
-                //"-p=-0.95", // set pre-emphasis factor to <val> (-1 <= val <= 0) (default: dependent on sample rate and nominal F1)
-                //"-s=10", // set analysis window shift to <dur> ms (default: 5.0)
-                //"-t=70" //  set silence threshold (no analysis) to <num> dB (default: 0.0 dB)
-            ]
-            if (speaker == "female") {
-                args.push("-f")
-            }
-            Module.callMain(args)
-            var results = parse_FMS(Module.FS.readFile("1.fms", { encoding: "utf8" }))
-            console.log(results)
-            for (var i = 0; i < results.length; i++) {
-                results[i]["F0(Hz)"] = pitch_results[i]["F0(Hz)"]
-            }
-            results = results.filter(r => r["F0(Hz)"] > 0 && r["F1(Hz)"] > 0 && r["F2(Hz)"] > 0)
-            if (results.length == 0) {
-                console.warn("No formants detected")
-                // $("#status").html('<div class="alert alert-danger" role="alert">No formants detected - is your microphone working?</div>')
-                return
-                // } else {
-                //     $("#status").text("")
-            }
-            console.log(`Time taken: ${performance.now() - start}ms`)
-            console.log(results)
-            var new_trace = {
-                x: results.map(r => hzToBark(r["F2(Hz)"])),
-                y: results.map(r => hzToBark(r["F1(Hz)"])),
-                opacity: 1,
-                mode: 'markers',
-                marker: {
-                    line: {
-                        width: 0
-                    }
-                },
-                type: 'scatter',
-                hoverinfo: "none"
-            };
-            for (var i = 0; i < traces.length - 1; i++) {
-                traces[i].opacity = Math.max(0, traces[i].opacity - .3)
-            }
-            traces.splice(traces.length - 1, 0, new_trace);
-            console.log(traces, layout)
-            Plotly.react(scatterplotElement, traces, layout);
+    const ksvFModule = await window.ksvF0({noInitialRun: true});
 
-            var keys = Object.keys(results[0]).filter(k => k.startsWith("F"))
-            var debug_traces = []
-            for (var k of keys) {
-                debug_traces.push({
-                    x: results.map(r => r.time),
-                    y: results.map(r => hzToBark(r[k])),
-                    name: k.replace("(Hz)", "(Bark)")
-                })
+    // return window.ksvF0({ noInitialRun: true }).then(async function (Module) {
+    ksvFModule.FS.writeFile("1.wav", content)
+    var ksvFArgs = [
+        "1.wav", // input file
+        "-oA", // output in XASSP ASCII format
+    ]
+    if (speaker == "female") {
+        ksvFArgs.push("-g=f")
+    } else {
+        ksvFArgs.push("-g=m")
+    }
+    ksvFModule.callMain(ksvFArgs)
+    var pitch_results = parse_F0(ksvFModule.FS.readFile("1.f0", { encoding: "utf8" }));
+    const forestModule = await window.forest({ noInitialRun: true });
+
+// return window.forest({ noInitialRun: true }).then(async function (Module) {
+    forestModule.FS.writeFile("1.wav", content)
+    var forestArgs = [
+        "1.wav", // input file
+        "-oA", // output in plain ASCII format
+        //"-L=49", // set effective length of analysis window to <dur> ms (default: 20.0)
+        "-n=2", // set number of output formants to <num> (default: 4;  maximum: 8 or half the LP order)
+        //"-p=-0.95", // set pre-emphasis factor to <val> (-1 <= val <= 0) (default: dependent on sample rate and nominal F1)
+        //"-s=10", // set analysis window shift to <dur> ms (default: 5.0)
+        //"-t=70" //  set silence threshold (no analysis) to <num> dB (default: 0.0 dB)
+    ]
+    if (speaker === "female") {
+        forestArgs.push("-f")
+    }
+    forestModule.callMain(forestArgs)
+    var results = parse_FMS(forestModule.FS.readFile("1.fms", { encoding: "utf8" }))
+    console.log(results)
+    for (var i = 0; i < results.length; i++) {
+        results[i]["F0(Hz)"] = pitch_results[i]["F0(Hz)"]
+    }
+    results = results.filter(r => r["F0(Hz)"] > 0 && r["F1(Hz)"] > 0 && r["F2(Hz)"] > 0)
+    if (results.length === 0) {
+        console.warn("No formants detected")
+        throw new Error("No formants detected");
+        // $("#status").html('<div class="alert alert-danger" role="alert">No formants detected - is your microphone working?</div>')
+        // } else {
+        //     $("#status").text("")
+    }
+    console.log(`Time taken: ${performance.now() - start}ms`)
+    console.log(results)
+    var new_trace = {
+        x: results.map(r => hzToBark(r["F2(Hz)"])),
+        y: results.map(r => hzToBark(r["F1(Hz)"])),
+        opacity: 1,
+        mode: 'markers',
+        marker: {
+            line: {
+                width: 0
             }
-            if (timelineElement) {
-                Plotly.react(timelineElement, debug_traces, timelineLayout);//, {staticPlot: true});
-                timelineElement.addEventListener("plotly_hover", function (data) {
-                    console.log(data);
-                    var points = data.points
-                    var time = points[0].x
-                    var index = results.findIndex(r => r.time == time)
-                    new_trace.marker.line.width = new_trace.x.map((x, i) => i == index ? 2 : 0)
-                    Plotly.react(scatterplotElement, traces, layout);
-                });
-            }
+        },
+        type: 'scatter',
+        hoverinfo: "none"
+    };
+    for (var i = 0; i < traces.length - 1; i++) {
+        traces[i].opacity = Math.max(0, traces[i].opacity - .3)
+    }
+    traces.splice(traces.length - 1, 0, new_trace);
+    console.log(traces, layout)
+    Plotly.react(scatterplotElement, traces, layout);
+
+    var keys = Object.keys(results[0]).filter(k => k.startsWith("F"))
+    var debug_traces = []
+    for (var k of keys) {
+        debug_traces.push({
+            x: results.map(r => r.time),
+            y: results.map(r => hzToBark(r[k])),
+            name: k.replace("(Hz)", "(Bark)")
         })
-    })
+    }
+    if (timelineElement) {
+        Plotly.react(timelineElement, debug_traces, timelineLayout);//, {staticPlot: true});
+        timelineElement.addEventListener("plotly_hover", function (data) {
+            console.log(data);
+            var points = data.points
+            var time = points[0].x
+            var index = results.findIndex(r => r.time == time)
+            new_trace.marker.line.width = new_trace.x.map((x, i) => i == index ? 2 : 0)
+            Plotly.react(scatterplotElement, traces, layout);
+        });
+    }
+        // })
+    // })
 }
 
 
@@ -536,8 +540,7 @@ function gotBuffers(buffers) {
     //audioRecorder.exportWAV(doneEncoding);
     return new Promise(function (resolve, reject) {
         audioRecorder.exportMonoWAV(function (blob) {
-            resolve(blob);
-            doneEncoding(blob);
+            resolve(doneEncoding(blob).then(() => blob));
         });
     });
 }
