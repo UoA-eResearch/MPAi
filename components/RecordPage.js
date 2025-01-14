@@ -3,6 +3,7 @@ import TikiMessage from "../components/TikiMessage.js";
 import BottomBar from "../components/BottomBar.js";
 import {appState, config, resources} from "../store.js";
 import { startRecording, stopRecording, initScatterplot, uploadAudioBlob, updateFormantEllipses, updateAnnotations, getLastRecording, setSpeakerGender } from '../audio.js';
+import SpeakerOptionDropdown from "./SpeakerOptionDropdown.js";
 
 
 export default {
@@ -21,9 +22,11 @@ export default {
             return this.attemptsRemaining <= 0;
         }
     },
-    components: { TopBar, TikiMessage, BottomBar },
+    components: { TopBar, TikiMessage, BottomBar, SpeakerOptionDropdown },
     template: `
-    <TopBar @prev-click="prevClicked()" :speakerOptionEnabled="true" />
+    <TopBar @prev-click="prevClicked()">
+        <SpeakerOptionDropdown />
+    </TopBar>
     <TikiMessage>Try pronouncing <div class="d-inline-block"
                    ref="playSampleHint"
                    data-bs-trigger="manual"
