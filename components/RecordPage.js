@@ -137,6 +137,16 @@ export default {
             updateFormantEllipses(this.$refs.dotplot, formants, this.vowel);
             updateAnnotations(this.$refs.dotplot, this.config.language);
             setSpeakerGender(gender);
+        },
+        showPlaySampleHintIfNeeded() {
+            if (!this.appState.hasShownPlaySampleHint) {
+                const playSampleHint = new bootstrap.Tooltip(this.$refs.playSampleHint);
+                playSampleHint.show();
+                this.appState.hasShownPlaySampleHint = true;
+                setTimeout(() => {
+                    playSampleHint.hide()
+                }, 5000);
+            }
         }
     },
     mounted() {
@@ -147,14 +157,7 @@ export default {
         window.addEventListener('keyup', this.handleSpaceReleased);
         // Play the sample on page load.
         this.playSample();
-        if (!this.appState.hasShownPlaySampleHint) {
-            const playSampleHint = new bootstrap.Tooltip(this.$refs.playSampleHint);
-            playSampleHint.show();
-            this.appState.hasShownPlaySampleHint = true;
-            setTimeout(() => {
-                playSampleHint.hide()
-            }, 5000);
-        }
+        this.showPlaySampleHintIfNeeded();
     },
     unmounted() {
         window.removeEventListener('keydown', this.handleSpacePressed);

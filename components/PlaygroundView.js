@@ -1,9 +1,9 @@
-import { initialiseTimeline, initScatterplot, startRecording, stopRecording, updateAnnotations } from "../audio.js";
+import { initialiseTimeline, initScatterplot, startRecording, stopRecording, updateAnnotations, updateFormantEllipses } from "../audio.js";
 import { config, resources, appState } from '../store.js'
 
 
 export default {
-    props: ['sound'],
+    props: ['sound', 'showEllipses'],
     data() {
         return {
             config,
@@ -162,10 +162,12 @@ export default {
         },
         initialisePlots() {
             const allFormants = this.resources.speakerFormants;
-            const gender = this.config.modelSpeaker.gender;
-            const formants = allFormants.filter(r => r.length == "long" && r.speaker == gender);
             initScatterplot(this.$refs.dotplot);
-            // updateFormantEllipses(this.$refs.dotplot, formants, this.vowel);
+            if (this.showEllipses) {
+                const gender = this.config.modelSpeaker.gender;
+                const formants = allFormants.filter(r => r.length == "long" && r.speaker == gender);
+                updateFormantEllipses(this.$refs.dotplot, formants, this.vowel);
+            }
             updateAnnotations(this.$refs.dotplot, this.config.language);
             // When initialising a plotly graph set to autosize, if the graph is not visible, it will be set to 450px.
             // On mobile view, timeline is hidden by default so it will be set to 450px, and thus larger than viewport. 

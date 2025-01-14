@@ -48,7 +48,8 @@ const appRoutes = [
     { name: 'hii-record', path: '/hii-record', component: () => import("./pages/HiiRecordPage.js"), beforeEnter: checkAudioPermission },
     { name: 'poo-record', path: '/poo-record', component: () => import("./pages/PooRecordPage.js"), beforeEnter: checkAudioPermission },
     { name: 'tuu-record', path: '/tuu-record', component: () => import("./pages/TuuRecordPage.js"), beforeEnter: checkAudioPermission },
-    { name: 'finish', path: '/finish', component: FinishPage }
+    { name: 'finish', path: '/finish', component: FinishPage },
+    { name: 'full-playground', path: '/full-playground', component: () => import("./pages/FullPlaygroundPage.js"), beforeEnter: checkAudioPermission },
 ];
 
 
