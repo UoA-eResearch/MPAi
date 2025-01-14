@@ -50,7 +50,7 @@ export default {
                 const sound = this.resources.sounds[this.currentSoundIdx + 1];
                 this.$router.push({ name: 'playground-vowel', params: { vowel: sound.vowel } });
             } else {
-                this.$router.push({ name: "model-speaker" });
+                this.$router.push({ name: "record-explanation" });
             }
         },
     }

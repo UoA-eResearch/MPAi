@@ -122,9 +122,6 @@ export default {
         showTooShortError() {
 
         },
-        handleFailedRecording() {
-
-        },
         showKeyboardHintIfNeeded() {
             // Shows hint for Space bar if it's not been shown before and we are on a desktop computer.
             if (!this.appState.hasShownKeyboardHint && !window.isMobileOrTablet()) {

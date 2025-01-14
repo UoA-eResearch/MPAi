@@ -4,6 +4,7 @@ import FinishPage from './pages/FinishPage.js';
 import ModelSpeakerPage from './pages/ModelSpeakerPage.js';
 // import translate from './translate.js';
 import PlaygroundExplanationPage from './pages/PlaygroundExplanationPage.js';
+import RecordExplanationPage from "./pages/RecordExplanationPage.js";
 
 window.config = config;
 
@@ -40,6 +41,7 @@ const appRoutes = [
     { name: 'playground-explanation', path: '/playground-explanation', component: PlaygroundExplanationPage },
     { name: 'playground', path: '/playground/', redirect: '/playground/a' },// component: () => import("./pages/PlaygroundPage.js"), beforeEnter: checkAudioPermission },
     { path: "/playground/:vowel", name: 'playground-vowel', component: () => import("./pages/PlaygroundPage.js"), beforeEnter: checkAudioPermission },
+    { name: "record-explanation", path: '/record-explanation', component: RecordExplanationPage, beforeEnter: checkAudioPermission },
     { name: "model-speaker", path: "/model-speaker", component: ModelSpeakerPage },
     { name: 'taa-record', path: '/taa-record', component: () => import("./pages/TaaRecordPage.js"), beforeEnter: checkAudioPermission },
     { name: 'hee-record', path: '/hee-record', component: () => import("./pages/HeeRecordPage.js"), beforeEnter: checkAudioPermission },
