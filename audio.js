@@ -51,7 +51,7 @@ const timelineLayout = {
     },
 }
 
-function hzToBark(freqHz) {
+export function hzToBark(freqHz) {
     var bark = 26.81 / (1 + (1960 / freqHz)) - 0.53 //#((26.81 * freqHz)/(1960 + freqHz)) - 0.53 #using Traunmüller1990
     return bark
 }

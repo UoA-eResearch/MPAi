@@ -25,7 +25,7 @@ export default {
     components: { TopBar, TikiMessage, BottomBar, SpeakerOptionDropdown },
     template: `
     <TopBar @prev-click="prevClicked()">
-        <SpeakerOptionDropdown />
+        <SpeakerOptionDropdown :echoOption="true" />
     </TopBar>
     <TikiMessage>Try pronouncing <div class="d-inline-block"
                    ref="playSampleHint"
@@ -105,7 +105,7 @@ export default {
                 console.warn(`No samples found for sound ${this.sound} in currently selected model speaker.`);
                 return;
             }
-            // Randomly selecte a sample to play back.
+            // Randomly selected a sample to play back.
             const idx = Math.round(Math.random() * (samples.length - 1))
             const audio = new Audio(samples[idx]);
             audio.play();

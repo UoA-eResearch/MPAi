@@ -11,9 +11,30 @@ export default {
     template: `
     <TopBar :hideBackButton="true">
       <AcknowledgementButton />
-      <SpeakerOptionDropdown />
+      <SpeakerOptionDropdown :echoOption="false" />
     </TopBar>
     <TikiMessage>Experiment with making different sounds.</TikiMessage>
-    <PlaygroundView :showEllipses="true" />
-    `
+    <PlaygroundView :showEllipses="true" @vowel-click="handleVowelClicked" />
+    `,
+    data() {
+        return {
+            config,
+            resources
+        }
+    },
+    methods: {
+        handleVowelClicked(vowel) {
+            console.log("Vowel clicked", vowel);
+            const sound = this.resources.sounds.find(sound => sound.vowel === vowel);
+            const samples = this.config.modelSpeaker.samples[sound.name];
+            if (!samples) {
+                console.warn(`No samples found for sound ${this.sound} in currently selected model speaker.`);
+                return;
+            }
+            // Randomly selected a sample to play back.
+            const idx = Math.round(Math.random() * (samples.length - 1))
+            const audio = new Audio(samples[idx]);
+            audio.play();
+        },
+    }
 };

@@ -15,5 +15,6 @@ export const appState = Vue.reactive({
 
 export const resources = Vue.reactive({
   modelSpeakerOptions: [],
-  speakerFormants: []
+  speakerFormants: [],
+  sounds: []
 });

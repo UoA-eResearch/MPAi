@@ -1,4 +1,12 @@
-import { initialiseTimeline, initScatterplot, startRecording, stopRecording, updateAnnotations, updateFormantEllipses } from "../audio.js";
+import {
+    hzToBark,
+    initialiseTimeline,
+    initScatterplot,
+    startRecording,
+    stopRecording,
+    updateAnnotations,
+    updateFormantEllipses
+} from "../audio.js";
 import { config, resources, appState } from '../store.js'
 
 
@@ -14,6 +22,13 @@ export default {
             isTimelineInitialised: false,
             recordTooltip: null,
             toolTipTimeoutId: null
+        }
+    },
+    computed: {
+        speakerFormants() {
+            const allFormants = this.resources.speakerFormants;
+            const gender = this.config.modelSpeaker.gender;
+            return allFormants.filter(r => r.length === "long" && r.speaker === gender);
         }
     },
     template: `
@@ -37,7 +52,7 @@ export default {
         </li>
     </ul>
     <div class="d-lg-flex flex-column flex-grow-1">
-        <div id="playground-dotplot" class="d-lg-block js-plotly-plot" :class="{'d-none': graphDisplayed === 'timeline'}" ref="dotplot"></div>
+        <div id="playground-dotplot" @click="handleDotplotClicked" class="d-lg-block js-plotly-plot" :class="{'d-none': graphDisplayed === 'timeline'}" ref="dotplot"></div>
         <div id="playground-timeline" class="d-lg-block js-plotly-plot" :class="{'d-none': graphDisplayed === 'dotplot'}" ref="timeline"></div>
     </div>
     <div class="text-center my-3">
@@ -67,6 +82,10 @@ export default {
             this.initialisePlots();
             // Remove any tooltips currently being displayed.
             this.clearTooltip();
+        },
+        "config.modelSpeaker": function () {
+            // Reinitialise the graph to show new formant.
+            this.initialisePlots();
         }
     },
     methods: {
@@ -85,8 +104,10 @@ export default {
                 this.isRecording = false;
                 try {
                     console.log("Recording stopped");
-                    await stopRecording();
+                    const audioBlob = await stopRecording();
+                    this.$emit('new-record', audioBlob);
                     this.showKeyboardHintIfNeeded();
+
                 } catch (err) {
                     this.showNoSoundError();
                 }
@@ -100,6 +121,34 @@ export default {
                 this.appState.hasShownKeyboardHint = true;
                 startRecording();
             }
+        },
+        handleDotplotClicked(event) {
+            // If formant ellipses are showing, figure out which the user
+            // clicked the closest to, and send an event.
+            if (!this.showEllipses) {
+                // If ellipses are not shown, then do not respond to clicks on the dotplot chart.
+                return;
+            }
+            const bb = event.target.getBoundingClientRect();
+            const elem = this.$refs.dotplot;
+            const l = elem._fullLayout.margin.l;
+            const t = elem._fullLayout.margin.t;
+            const x = elem._fullLayout.xaxis.p2d(event.clientX - bb.left - l);
+            const y = elem._fullLayout.yaxis.p2d(event.clientY - bb.top - t);
+            const formantXs = this.speakerFormants.map(f => hzToBark(f["F2_mean"]));
+            const formantYs = this.speakerFormants.map(f => hzToBark(f["F1_mean"]));
+
+            let minIdx = 0;
+            let minDist = Infinity;
+            for (let i = 0; i < formantXs.length; i++) {
+                let dist = Math.sqrt((formantXs[i] - x) ** 2 + (formantYs[i] - y) ** 2)
+                if (dist < minDist) {
+                    minDist = dist;
+                    minIdx = i;
+                }
+            }
+            const vowel = this.speakerFormants[minIdx].vowel;
+            this.$emit("vowel-click", vowel);
         },
         clearTooltip() {
             // Hide and destroy the tooltip.
@@ -141,7 +190,8 @@ export default {
             if (event.code === 'Space' && this.isRecording) {
                 this.isRecording = false;
                 try {
-                    await stopRecording();
+                    const audioBlob = await stopRecording();
+                    this.$emit('new-record', audioBlob);
                 } catch (err) {
                     this.showNoSoundError();
                 }
@@ -161,12 +211,9 @@ export default {
             });
         },
         initialisePlots() {
-            const allFormants = this.resources.speakerFormants;
             initScatterplot(this.$refs.dotplot);
             if (this.showEllipses) {
-                const gender = this.config.modelSpeaker.gender;
-                const formants = allFormants.filter(r => r.length == "long" && r.speaker == gender);
-                updateFormantEllipses(this.$refs.dotplot, formants, this.vowel);
+                updateFormantEllipses(this.$refs.dotplot, this.speakerFormants, this.vowel);
             }
             updateAnnotations(this.$refs.dotplot, this.config.language);
             // When initialising a plotly graph set to autosize, if the graph is not visible, it will be set to 450px.

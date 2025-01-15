@@ -1,6 +1,7 @@
 import { config,resources } from "../store.js";
 
 export default {
+    props: ['echoOption'],
     data(){
         return {
             config,
@@ -23,9 +24,9 @@ export default {
                 <input class="form-check-input me-1" type="radio" :checked="speaker.name == config.modelSpeaker.name" :value="speaker.name" :id="'speaker-' + speaker.name">
                 <label class="form-check-label" :for="'speaker-' + speaker.name">{{speaker.displayName}}</label>
                 </li>
-                <li><hr class="dropdown-divider"></li>
-                <li role="menuitemcheckbox" class="w-100 dropdown-item" @click="config.echo = !config.echo">
-                <div class="d-flex">
+                <li><hr class="dropdown-divider"  v-if="echoOption"></li>
+                <li v-if="echoOption" role="menuitemcheckbox" class="w-100 dropdown-item" @click="config.echo = !config.echo">
+                <div class="d-flex" >
                     <input class="form-check-input me-1" type="checkbox" :checked="config.echo" id="echo-option-checkbox">
                     <div>
                         <label class="form-check-label" for="echo-option-checkbox">Echo</label>
